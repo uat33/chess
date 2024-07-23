@@ -11,7 +11,7 @@ class Piece {
    public:
     Piece(int y = 0, int x = 0, Color c = Color::WHITE,
           PieceType t = PieceType::PAWN);
-        
+
     virtual ~Piece();
     int getX() const;
     int getY() const;
@@ -66,6 +66,9 @@ class Rook : public Piece {
 
    protected:
     std::vector<string> listValidMoves(Piece **grid) const override;
+
+   private:
+    bool hasMoved = false;
 };
 
 class King : public Piece {
@@ -79,6 +82,7 @@ class King : public Piece {
 
    private:
     bool underCheck = false;
+    bool hasMoved = false;
 };
 
 string pieceString(PieceType t);
