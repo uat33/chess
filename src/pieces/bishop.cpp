@@ -2,6 +2,8 @@
 
 Bishop::Bishop(int y, int x, Color c) : Piece(y, x, c, PieceType::BISHOP) {}
 
-bool Bishop::isValidMove(int y, int x, Piece** grid) {
-    return false;
+bool Bishop::isValidMove(int targetY, int targetX, Piece** grid) {
+  
+  return validDiagonalMove(getY(), getX(), targetY, targetX, grid);
+
 }

@@ -88,4 +88,6 @@ class King : public Piece {
 };
 
 string pieceString(PieceType t);
+bool validLateralMove(int y1, int x1, int y2, int x2, Piece **grid);
+bool validDiagonalMove(int y1, int x1, int y2, int x2, Piece **grid);
 #endif  // PIECE_H
