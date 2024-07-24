@@ -22,12 +22,15 @@ class Piece {
     Color getColor() const;
     virtual void display(Color c) const;
     virtual bool movePiece(int y, int x, Piece **grid) = 0;
+    bool getJustMoved() const;
+    void setJustMoved(bool x);
 
    protected:
     PieceType type;
     Color color;
     int y;
     int x;
+    bool justMoved = false;
 };
 
 class Pawn : public Piece {

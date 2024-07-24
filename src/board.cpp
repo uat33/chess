@@ -43,7 +43,8 @@ static void printHorizontalLine() {
 }
 
 void Board::display(Color playerturn) const {
-    // fill with row nums
+    // fill with row nums based off of whether this is being seen from one
+    // player's side or the other
     int arr[DIMENSION];
     string fileLetters;
     for (int i = 0; i < DIMENSION; i++) {

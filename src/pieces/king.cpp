@@ -12,7 +12,10 @@ void King::setCheck(bool check) {
 
 void King::display(Color c) const {
     std::cout << " ";
-
+    if (getJustMoved()) {
+        std::cout << YELLOW << pieceString(type) << " |" << RESET;
+        return;
+    }
     if (underCheck) {
         std::cout << RED << pieceString(type) << RESET;
     } else if (c == Color::BLACK) {
