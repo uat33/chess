@@ -31,7 +31,6 @@ int main(int argc, char const *argv[]) {
             playerturn = Color::WHITE;
         }
     }
-    // TODO: make list valid moves logic for each
     // TODO: make logic for check and checkmate
     // TODO: make logic for castling
     return 0;

@@ -91,27 +91,18 @@ int Board::processMove(const string &s, Color playerturn) {
     int y2 = 8 - (row2 - '0');
     int x2 = file2 - 'a';
 
-    int index = convertCors(y1, x1);
-    // one of the player's pieces must be on the chosen tile
-    if (grid[index] == nullptr || grid[index]->getColor() != playerturn)
-        return -1;
-    bool res = grid[index]->isValidMove(y2, x2, grid);
-    if (!res) return -1;
-    grid[index]->setX(x2);
-    grid[index]->setY(y2);
-    int targetIndex = convertCors(y2, x2);
-
-    if (grid[targetIndex] != nullptr) {
-        // capture
-        delete grid[targetIndex];
+    bool res;
+    if (playerturn == Color::WHITE) {
+        res = white->makeMove(y1, x1, y2, x2, grid, black);
+    } else {
+        res = black->makeMove(y1, x1, y2, x2, grid, white);
     }
+    if (!res) return -1;
 
-    grid[targetIndex] = grid[index];
-    grid[targetIndex]->setJustMoved(true);
     if (lastMoved != nullptr) {
         lastMoved->setJustMoved(false);
     }
-    lastMoved = grid[targetIndex];
-    grid[index] = nullptr;
+    lastMoved = grid[convertCors(y2, x2)];
+
     return 0;
 }

@@ -76,9 +76,8 @@ void Piece::setJustMoved(bool x) {
     justMoved = x;
 }
 
-
-bool validLateralMove(int currentY, int currentX, int targetY, int targetX, Piece **grid){
-
+bool validLateralMove(int currentY, int currentX, int targetY, int targetX,
+                      Piece **grid) {
     // must be the same x or the same y but not both
     if (!((currentY == targetY) ^ (currentX == targetX))) return false;
 
@@ -118,44 +117,39 @@ bool validLateralMove(int currentY, int currentX, int targetY, int targetX, Piec
     }
 
     return true;
-
 }
 
-bool validDiagonalMove(int currentY, int currentX, int targetY, int targetX, Piece **grid){
- 
+bool validDiagonalMove(int currentY, int currentX, int targetY, int targetX,
+                       Piece **grid) {
+    int diffY = std::fabs(currentY - targetY);
+    int diffX = std::fabs(currentX - targetX);
 
-  int diffY = std::fabs(currentY - targetY);
-  int diffX = std::fabs(currentX - targetX);
+    if (diffY != diffX || diffX == 0) return false;
 
-  if (diffY != diffX) return false;
+    int directionX = currentX > targetX ? -1 : 1;
 
-  int directionX = currentX > targetX ? -1 : 1;
-  
-  int directionY = currentY > targetY ? -1 : 1;
-  
-  int startX = currentX;
-  int startY = currentY;
-  
-  // check that the path from current to target is clear
-  while (startY != targetY){
-    
-    int index = convertCors(startY, startX);
+    int directionY = currentY > targetY ? -1 : 1;
 
-    if (grid[index] != nullptr) return false;
+    int startX = currentX + directionX;
+    int startY = currentY + directionY;
 
-    startY += directionY;
-    startX += directionX;
-  }
-  // check that the targer does not have one of the player's pieces
-  int targetIndex = convertCors(targetY, targetX);
+    // check that the path from current to target is clear
+    while (startY != targetY) {
+        int index = convertCors(startY, startX);
 
-  int currentIndex = convertCors(currentY, currentX);
-  Color pieceColor = grid[currentIndex]->getColor();
-  if (grid[targetIndex] != nullptr && grid[targetIndex]->getColor() == pieceColor){
-    return false;
-  }
+        if (grid[index] != nullptr) return false;
 
+        startY += directionY;
+        startX += directionX;
+    }
+    // check that the targer does not have one of the player's pieces
+    int targetIndex = convertCors(targetY, targetX);
+    int currentIndex = convertCors(currentY, currentX);
+    Color pieceColor = grid[currentIndex]->getColor();
+    if (grid[targetIndex] != nullptr &&
+        grid[targetIndex]->getColor() == pieceColor) {
+        return false;
+    }
 
-  return true;
-
+    return true;
 }

@@ -3,21 +3,19 @@
 King::King(int y, int x, Color c) : Piece(y, x, c, PieceType::KING) {}
 
 bool King::isValidMove(int y, int x, Piece** grid) {
-    
     int currentX = getX();
     int currentY = getY();
-    
+
     if (x == currentX && y == currentY) return false;
 
     if (std::fabs(x - currentX) > 1) return false;
     if (std::fabs(y - currentY) > 1) return false;
-    
+
     int index = convertCors(y, x);
-    if (grid[index] != nullptr && grid[index]->getColor() == getColor()){
-      return false;
+    if (grid[index] != nullptr && grid[index]->getColor() == getColor()) {
+        return false;
     }
-    
-    
+
     return true;
 }
 

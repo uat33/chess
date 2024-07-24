@@ -17,14 +17,18 @@ bool Pawn::isValidMove(int targetY, int targetX, Piece **grid) {
 
     int direction = 1;
     int startingRow = 1;
+
+    if (std::fabs(currentY - targetY) > 2) {
+        return false;
+    }
     if (color == Color::WHITE) {
         direction = -1;
         startingRow = 6;
-        // pawn can only move forward by maximum of two
-        if (targetY >= currentY || targetY - currentY < -2) return false;
+        // pawn can not go backwards
+        if (targetY >= currentY) return false;
 
     } else {
-        if (targetY <= currentY || targetY - currentY > 2) return false;
+        if (targetY <= currentY) return false;
     }
     // can only be at most one column away
     if (std::fabs(currentX - targetX) > 1) {
@@ -62,22 +66,19 @@ bool Pawn::isValidMove(int targetY, int targetX, Piece **grid) {
         return true;
     }
 
-    // en passant
-
-    if (currentY == startingRow + direction * 3) {
-        int pawnSquare = convertCors(currentY, targetX);
-        if (grid[pawnSquare] != nullptr &&
-            grid[pawnSquare]->getType() == PieceType::PAWN) {
-            Pawn *pawn = dynamic_cast<Pawn *>(grid[pawnSquare]);
-            if (pawn == nullptr) {
-                std::cerr << "cast failed" << std::endl;
-            } else {
-                delete grid[pawnSquare];
-                grid[pawnSquare] = nullptr;
-                if (pawn->getJustMovedTwo()) return true;
-            }
-        }
-    }
+    // TODO: capture en passant
+    // if (currentY == startingRow + direction * 3) {
+    //     int pawnSquare = convertCors(currentY, targetX);
+    //     if (grid[pawnSquare] != nullptr &&
+    //         grid[pawnSquare]->getType() == PieceType::PAWN) {
+    //         Pawn *pawn = dynamic_cast<Pawn *>(grid[pawnSquare]);
+    //         if (pawn == nullptr) {
+    //             std::cerr << "cast failed" << std::endl;
+    //         } else {
+    //             if (pawn->getJustMovedTwo()) return true;
+    //         }
+    //     }
+    // }
 
     return false;
 }
