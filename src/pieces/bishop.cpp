@@ -2,7 +2,6 @@
 
 Bishop::Bishop(int y, int x, Color c) : Piece(y, x, c, PieceType::BISHOP) {}
 
-std::vector<string> Bishop::listValidMoves(Piece **grid) const {
-    std::vector<string> result;
-    return result;
+bool Bishop::movePiece(int y, int x, Piece** grid) {
+    return false;
 }

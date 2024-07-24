@@ -29,8 +29,4 @@ Piece** Player::getPieces() {
     return pieces;
 }
 
-bool Player::processMove() const {
-    return false;
-}
-
 void Player::removePiece(int y, int x) {}

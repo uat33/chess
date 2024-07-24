@@ -2,9 +2,8 @@
 
 King::King(int y, int x, Color c) : Piece(y, x, c, PieceType::KING) {}
 
-std::vector<string> King::listValidMoves(Piece **grid) const {
-    std::vector<string> result;
-    return result;
+bool King::movePiece(int y, int x, Piece** grid) {
+    return false;
 }
 
 void King::setCheck(bool check) {

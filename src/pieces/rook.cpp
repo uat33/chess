@@ -2,7 +2,6 @@
 
 Rook::Rook(int y, int x, Color c) : Piece(y, x, c, PieceType::ROOK) {}
 
-std::vector<string> Rook::listValidMoves(Piece **grid) const {
-    std::vector<string> result;
-    return result;
+bool Rook::movePiece(int y, int x, Piece** grid) {
+    return false;
 }

@@ -16,7 +16,6 @@ class Player {
     Color pieceColor;
     int numpieces = NUMPIECES;
     int material = 0;
-    bool processMove() const;
     void removePiece(int y, int x);
 };
 

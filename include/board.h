@@ -4,12 +4,14 @@
 #define BOARD_H
 
 #include "player.h"
+#include "util.h"
 
 class Board {
    public:
     Board();
     ~Board();
     void display() const;
+    int processMove(const string &s, Color playerturn);
 
    private:
     Player *white;

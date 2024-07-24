@@ -1,4 +1,5 @@
 #include "../include/piece.h"
+#include "piece.h"
 
 string pieceString(PieceType t) {
     switch (t) {
@@ -36,6 +37,15 @@ int Piece::getY() const {
     return y;
 }
 
+void Piece::setX(int x) {
+    if (x < 0 || x > 7) return;
+    this->x = x;
+}
+
+void Piece::setY(int y) {
+    if (y < 0 || y > 7) return;
+    this->y = y;
+}
 PieceType Piece::getType() const {
     return type;
 }
@@ -52,11 +62,4 @@ void Piece::display(Color c) const {
         std::cout << pieceString(type);
     }
     std::cout << " |";
-}
-
-void Piece::movePiece(int y, int x) {
-    if (y < 0 || y > DIMENSION - 1) return;
-    if (x < 0 || x > DIMENSION - 1) return;
-    this->y = y;
-    this->x = x;
 }
