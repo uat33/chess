@@ -92,6 +92,9 @@ int Board::processMove(const string &s, Color playerturn) {
     int x2 = file2 - 'a';
 
     int index = convertCors(y1, x1);
+    // one of the player's pieces must be on the chosen tile
+    if (grid[index] == nullptr || grid[index]->getColor() != playerturn)
+        return -1;
     bool res = grid[index]->isValidMove(y2, x2, grid);
     if (!res) return -1;
     grid[index]->setX(x2);

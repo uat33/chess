@@ -17,9 +17,6 @@ bool Pawn::isValidMove(int targetY, int targetX, Piece **grid) {
 
     int direction = 1;
     int startingRow = 1;
-    std::cout << "in here " << targetY << " " << targetX << std::endl;
-    std::cout << "in here " << currentY << " " << currentX << std::endl;
-
     if (color == Color::WHITE) {
         direction = -1;
         startingRow = 6;
