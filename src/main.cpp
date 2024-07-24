@@ -7,7 +7,7 @@ int main(int argc, char const *argv[]) {
     Color playerturn = Color::WHITE;
     std::string move;
     while (true) {
-        b->display();
+        b->display(playerturn);
 
         std::cout << "Enter a move (enter 'resign' to resign): " << std::endl;
         std::cout << "Format `{tile 1}-{tile 2}` (e.g e2-e4)" << std::endl;
@@ -26,9 +26,9 @@ int main(int argc, char const *argv[]) {
             std::cout << "Invalid move." << std::endl;
         }
         if (playerturn == Color::WHITE) {
-            playerturn = Color::WHITE;
-        } else {
             playerturn = Color::BLACK;
+        } else {
+            playerturn = Color::WHITE;
         }
     }
 

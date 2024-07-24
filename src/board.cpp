@@ -1,7 +1,5 @@
 #include "../include/board.h"
 
-
-
 Board::Board() {
     white = new Player(Color::WHITE);
     black = new Player(Color::BLACK);
@@ -44,23 +42,43 @@ static void printHorizontalLine() {
     std::cout << std::endl;
 }
 
-void Board::display() const {
-    printHorizontalLine();
-    for (int i = 0; i < DIMENSION; i++) {
-        std::cout << 8 - i << " |";
-        for (int j = 0; j < DIMENSION; j++) {
-            int index = convertCors(i, j);
-
-            if (grid[index] == nullptr) {
-                std::cout << "   |";
-            } else {
-                grid[index]->display(grid[index]->getColor());
-            }
-        }
-        std::cout << std::endl;
+void Board::display(Color playerturn) const {
+    if (playerturn == Color::WHITE) {
         printHorizontalLine();
+        for (int i = 0; i < DIMENSION; i++) {
+            std::cout << 8 - i << " |";
+            for (int j = 0; j < DIMENSION; j++) {
+                int index = convertCors(i, j);
+
+                if (grid[index] == nullptr) {
+                    std::cout << "   |";
+                } else {
+                    grid[index]->display(grid[index]->getColor());
+                }
+            }
+            std::cout << std::endl;
+            printHorizontalLine();
+        }
+        std::cout << "    a   b   c   d   e   f   g   h" << std::endl;
+
+    } else {
+        printHorizontalLine();
+        for (int i = DIMENSION - 1; i >= 0; i--) {
+            std::cout << 8 - i << " |";
+            for (int j = DIMENSION - 1; j >= 0; j--) {
+                int index = convertCors(i, j);
+
+                if (grid[index] == nullptr) {
+                    std::cout << "   |";
+                } else {
+                    grid[index]->display(grid[index]->getColor());
+                }
+            }
+            std::cout << std::endl;
+            printHorizontalLine();
+        }
+        std::cout << "    h   g   f   e   d   c   b   a" << std::endl;
     }
-    std::cout << "    a   b   c   d   e   f   g   h" << std::endl;
 }
 
 int Board::processMove(const string &s, Color playerturn) {

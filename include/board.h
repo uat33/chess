@@ -10,7 +10,7 @@ class Board {
    public:
     Board();
     ~Board();
-    void display() const;
+    void display(Color c) const;
     int processMove(const string &s, Color playerturn);
 
    private:
