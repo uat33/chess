@@ -43,42 +43,34 @@ static void printHorizontalLine() {
 }
 
 void Board::display(Color playerturn) const {
-    if (playerturn == Color::WHITE) {
-        printHorizontalLine();
-        for (int i = 0; i < DIMENSION; i++) {
-            std::cout << 8 - i << " |";
-            for (int j = 0; j < DIMENSION; j++) {
-                int index = convertCors(i, j);
-
-                if (grid[index] == nullptr) {
-                    std::cout << "   |";
-                } else {
-                    grid[index]->display(grid[index]->getColor());
-                }
-            }
-            std::cout << std::endl;
-            printHorizontalLine();
+    // fill with row nums
+    int arr[DIMENSION];
+    string fileLetters;
+    for (int i = 0; i < DIMENSION; i++) {
+        if (playerturn == Color::WHITE) {
+            arr[i] = i;
+            fileLetters = "    a   b   c   d   e   f   g   h";
+        } else {
+            arr[i] = DIMENSION - 1 - i;
+            fileLetters = "    h   g   f   e   d   c   b   a";
         }
-        std::cout << "    a   b   c   d   e   f   g   h" << std::endl;
-
-    } else {
-        printHorizontalLine();
-        for (int i = DIMENSION - 1; i >= 0; i--) {
-            std::cout << 8 - i << " |";
-            for (int j = DIMENSION - 1; j >= 0; j--) {
-                int index = convertCors(i, j);
-
-                if (grid[index] == nullptr) {
-                    std::cout << "   |";
-                } else {
-                    grid[index]->display(grid[index]->getColor());
-                }
-            }
-            std::cout << std::endl;
-            printHorizontalLine();
-        }
-        std::cout << "    h   g   f   e   d   c   b   a" << std::endl;
     }
+
+    printHorizontalLine();
+    for (int i : arr) {
+        std::cout << 8 - i << " |";
+        for (int j : arr) {
+            int index = convertCors(i, j);
+            if (grid[index] == nullptr) {
+                std::cout << "   |";
+            } else {
+                grid[index]->display(grid[index]->getColor());
+            }
+        }
+        std::cout << std::endl;
+        printHorizontalLine();
+    }
+    std::cout << fileLetters << std::endl;
 }
 
 int Board::processMove(const string &s, Color playerturn) {
