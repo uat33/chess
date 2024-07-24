@@ -5,51 +5,90 @@ Pawn::Pawn(int y, int x, Color c) : Piece(y, x, c, PieceType::PAWN) {}
 // 0
 // 1
 // 2
-// 3
-// 4
+// 3 (white's en passant square)
+// 4 (black's en passant squre)
 // 5
 // 6
 // 7
-bool Pawn::movePiece(int y, int x, Piece **grid) {
+bool Pawn::isValidMove(int targetY, int targetX, Piece **grid) {
     int currentY = getY();
     int currentX = getX();
     Color color = getColor();
 
-    int modifier = 1;
+    int direction = 1;
+    int startingRow = 1;
+    std::cout << "in here " << targetY << " " << targetX << std::endl;
+    std::cout << "in here " << currentY << " " << currentX << std::endl;
+
     if (color == Color::WHITE) {
-        modifier = -1;
+        direction = -1;
+        startingRow = 6;
+        // pawn can only move forward by maximum of two
+        if (targetY >= currentY || targetY - currentY < -2) return false;
+
+    } else {
+        if (targetY <= currentY || targetY - currentY > 2) return false;
+    }
+    // can only be at most one column away
+    if (std::fabs(currentX - targetX) > 1) {
+        return false;
+    }
+
+    // two squares is only allowed if this is the starting square and it is
+    // moving forward
+    if (std::fabs(currentY - targetY) == 2) {
+        if (currentY != startingRow || targetX != currentX) return false;
+    }
+
+    // if it is the same column
+    if (targetX == currentX) {
+        int start = currentY + direction;
+        do {
+            int index = convertCors(start, currentX);
+            if (grid[index] != nullptr) return false;
+
+            start += direction;
+        } while (start != targetY + direction);
+
+        if (std::fabs(currentY - targetY) == 2) {
+            setJustMovedTwo(true);
+        }
+        return true;
+    }
+
+    // different column -- already checked above that it is only moving one
+    // square in the y direction
+    int targetIndex = convertCors(targetY, targetX);
+    // check that there is a piece and it is a different color
+    if (grid[targetIndex] != nullptr &&
+        grid[targetIndex]->getColor() != color) {
+        return true;
+    }
+
+    // en passant
+
+    if (currentY == startingRow + direction * 3) {
+        int pawnSquare = convertCors(currentY, targetX);
+        if (grid[pawnSquare] != nullptr &&
+            grid[pawnSquare]->getType() == PieceType::PAWN) {
+            Pawn *pawn = dynamic_cast<Pawn *>(grid[pawnSquare]);
+            if (pawn == nullptr) {
+                std::cerr << "cast failed" << std::endl;
+            } else {
+                delete grid[pawnSquare];
+                grid[pawnSquare] = nullptr;
+                if (pawn->getJustMovedTwo()) return true;
+            }
+        }
     }
 
     return false;
 }
 
-// if (y > currentY || y < currentY - 2) return false;
-// if (x < currentX - 1 || x > currentX + 1) return false;
-// if (currentX == x) {
-//     if (currentY - 2 == y) {
-//         if (currentY != 6) return false;
-//     }
+void Pawn::setJustMovedTwo(bool x) {
+    justMovedTwo = x;
+}
 
-//     // piece in between
-//     for (int i = currentY - 1; i <= y; i--) {
-//         if (grid[convertCors(i, x)] != nullptr) return false;
-//     }
-
-//     setX(x);
-//     setY(y);
-//     return true;
-// } else {  // different file
-//     if (currentY - 1 != y) return false;
-
-//     int index = convertCors(y, x);
-
-//     if (grid[index] != nullptr &&
-//         grid[index]->getColor() != getColor()) {
-//         // TODO: capture that piece
-//         setX(x);
-//         setY(y);
-//         return true;
-//     }
-//     // TODO: en passant
-//     return false;
-// }
+bool Pawn::getJustMovedTwo() {
+    return justMovedTwo;
+}

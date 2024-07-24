@@ -91,9 +91,24 @@ int Board::processMove(const string &s, Color playerturn) {
     int y2 = 8 - (row2 - '0');
     int x2 = file2 - 'a';
 
-    std::cout << y1 << " " << x1 << " " << y2 << " " << x2 << std::endl;
     int index = convertCors(y1, x1);
-    bool res = grid[index]->movePiece(y2, x2, grid);
+    bool res = grid[index]->isValidMove(y2, x2, grid);
     if (!res) return -1;
+    grid[index]->setX(x2);
+    grid[index]->setY(y2);
+    int targetIndex = convertCors(y2, x2);
+
+    if (grid[targetIndex] != nullptr) {
+        // capture
+        delete grid[targetIndex];
+    }
+
+    grid[targetIndex] = grid[index];
+    grid[targetIndex]->setJustMoved(true);
+    if (lastMoved != nullptr) {
+        lastMoved->setJustMoved(false);
+    }
+    lastMoved = grid[targetIndex];
+    grid[index] = nullptr;
     return 0;
 }

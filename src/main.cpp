@@ -3,7 +3,6 @@
 #include "../include/board.h"
 int main(int argc, char const *argv[]) {
     Board *b = new Board();
-
     Color playerturn = Color::WHITE;
     std::string move;
     while (true) {
@@ -24,6 +23,7 @@ int main(int argc, char const *argv[]) {
         }
         if (result == -1) {
             std::cout << "Invalid move." << std::endl;
+            continue;
         }
         if (playerturn == Color::WHITE) {
             playerturn = Color::BLACK;
@@ -31,9 +31,8 @@ int main(int argc, char const *argv[]) {
             playerturn = Color::WHITE;
         }
     }
-
     // TODO: make list valid moves logic for each
-    // TODO: check if input is valid move
     // TODO: make logic for check and checkmate
+    // TODO: make logic for castling
     return 0;
 }

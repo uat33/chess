@@ -57,7 +57,7 @@ Color Piece::getColor() const {
 void Piece::display(Color c) const {
     std::cout << " ";
     if (getJustMoved()) {
-        std::cout << YELLOW << pieceString(type) << " |" << RESET;
+        std::cout << YELLOW << pieceString(type) << RESET << " |";
         return;
     }
     if (c == Color::BLACK) {

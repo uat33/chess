@@ -2,7 +2,7 @@
 
 King::King(int y, int x, Color c) : Piece(y, x, c, PieceType::KING) {}
 
-bool King::movePiece(int y, int x, Piece** grid) {
+bool King::isValidMove(int y, int x, Piece** grid) {
     return false;
 }
 
@@ -13,7 +13,7 @@ void King::setCheck(bool check) {
 void King::display(Color c) const {
     std::cout << " ";
     if (getJustMoved()) {
-        std::cout << YELLOW << pieceString(type) << " |" << RESET;
+        std::cout << YELLOW << pieceString(type) << RESET << " |";
         return;
     }
     if (underCheck) {

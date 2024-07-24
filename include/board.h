@@ -17,6 +17,7 @@ class Board {
     Player *white;
     Player *black;
     Piece *grid[DIMENSION * DIMENSION];
+    Piece *lastMoved = nullptr;
 };
 
 #endif  // BOARD_H

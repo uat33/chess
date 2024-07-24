@@ -3,11 +3,13 @@
 #ifndef PIECE_H
 #define PIECE_H
 
+#include <cmath>
 #include <iostream>
 
 #include "colors.h"
 #include "definitions.h"
 #include "util.h"
+
 class Piece {
    public:
     Piece(int y = 0, int x = 0, Color c = Color::WHITE,
@@ -21,7 +23,7 @@ class Piece {
     PieceType getType() const;
     Color getColor() const;
     virtual void display(Color c) const;
-    virtual bool movePiece(int y, int x, Piece **grid) = 0;
+    virtual bool isValidMove(int y, int x, Piece **grid) = 0;
     bool getJustMoved() const;
     void setJustMoved(bool x);
 
@@ -36,31 +38,36 @@ class Piece {
 class Pawn : public Piece {
    public:
     Pawn(int y, int x, Color c);
-    bool movePiece(int y, int x, Piece **grid) override;
+    bool isValidMove(int y, int x, Piece **grid) override;
+    bool getJustMovedTwo();
+    void setJustMovedTwo(bool x);
+
+   private:
+    bool justMovedTwo = false;
 };
 
 class Knight : public Piece {
    public:
     Knight(int y, int x, Color c);
-    bool movePiece(int y, int x, Piece **grid) override;
+    bool isValidMove(int y, int x, Piece **grid) override;
 };
 
 class Bishop : public Piece {
    public:
     Bishop(int y, int x, Color c);
-    bool movePiece(int y, int x, Piece **grid) override;
+    bool isValidMove(int y, int x, Piece **grid) override;
 };
 
 class Queen : public Piece {
    public:
     Queen(int y, int x, Color c);
-    bool movePiece(int y, int x, Piece **grid) override;
+    bool isValidMove(int y, int x, Piece **grid) override;
 };
 
 class Rook : public Piece {
    public:
     Rook(int y, int x, Color c);
-    bool movePiece(int y, int x, Piece **grid) override;
+    bool isValidMove(int y, int x, Piece **grid) override;
 
    private:
     bool hasMoved = false;
@@ -71,7 +78,7 @@ class King : public Piece {
     King(int y, int x, Color c);
     void setCheck(bool check);
     void display(Color c) const override;
-    bool movePiece(int y, int x, Piece **grid) override;
+    bool isValidMove(int y, int x, Piece **grid) override;
 
    private:
     bool underCheck = false;
