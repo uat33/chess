@@ -68,6 +68,8 @@ class Rook : public Piece {
    public:
     Rook(int y, int x, Color c);
     bool isValidMove(int y, int x, Piece **grid) override;
+    bool getHasMoved();
+    void setHasMoved(bool x);
 
    private:
     bool hasMoved = false;
