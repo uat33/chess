@@ -2,14 +2,6 @@
 
 Pawn::Pawn(int y, int x, Color c) : Piece(y, x, c, PieceType::PAWN) {}
 
-// 0
-// 1
-// 2
-// 3 (white's en passant square)
-// 4 (black's en passant squre)
-// 5
-// 6
-// 7
 bool Pawn::isValidMove(int targetY, int targetX, Piece **grid) {
     int currentY = getY();
     int currentX = getX();
@@ -66,19 +58,22 @@ bool Pawn::isValidMove(int targetY, int targetX, Piece **grid) {
         return true;
     }
 
-    // TODO: capture en passant
-    // if (currentY == startingRow + direction * 3) {
-    //     int pawnSquare = convertCors(currentY, targetX);
-    //     if (grid[pawnSquare] != nullptr &&
-    //         grid[pawnSquare]->getType() == PieceType::PAWN) {
-    //         Pawn *pawn = dynamic_cast<Pawn *>(grid[pawnSquare]);
-    //         if (pawn == nullptr) {
-    //             std::cerr << "cast failed" << std::endl;
-    //         } else {
-    //             if (pawn->getJustMovedTwo()) return true;
-    //         }
-    //     }
-    // }
+    if (currentY == startingRow + direction * 3) {
+        int pawnSquare = convertCors(currentY, targetX);
+        if (grid[pawnSquare] != nullptr &&
+            grid[pawnSquare]->getType() == PieceType::PAWN) {
+            Pawn *pawn = dynamic_cast<Pawn *>(grid[pawnSquare]);
+            if (pawn == nullptr) {
+                std::cerr << "cast failed" << std::endl;
+            } else {
+                if (pawn->getJustMovedTwo()) {
+                    // valid en passant
+                    setJustEnPassant(true);
+                    return true;
+                }
+            }
+        }
+    }
 
     return false;
 }
@@ -89,4 +84,12 @@ void Pawn::setJustMovedTwo(bool x) {
 
 bool Pawn::getJustMovedTwo() {
     return justMovedTwo;
+}
+
+void Pawn::setJustEnPassant(bool x) {
+    justEnPassant = x;
+}
+
+bool Pawn::getJustEnPassant() {
+    return justEnPassant;
 }

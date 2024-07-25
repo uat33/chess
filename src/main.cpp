@@ -46,5 +46,7 @@ int main(int argc, char const *argv[]) {
     }
     // TODO: make logic for check and checkmate
     // TODO: make logic for castling
+    // TODO: pawn promotion
+    delete b;
     return 0;
 }

@@ -41,9 +41,12 @@ class Pawn : public Piece {
     bool isValidMove(int y, int x, Piece **grid) override;
     bool getJustMovedTwo();
     void setJustMovedTwo(bool x);
+    bool getJustEnPassant();
+    void setJustEnPassant(bool x);
 
    private:
     bool justMovedTwo = false;
+    bool justEnPassant = false;
 };
 
 class Knight : public Piece {

@@ -69,7 +69,6 @@ int Player::makeMove(int y1, int x1, int y2, int x2, Piece **grid,
     grid[targetIndex] = grid[index];
     grid[index] = nullptr;
 
-    // TODO: the resulting board must not have the opponent under check
     if (isUnderCheck(grid, opponent)) {
         grid[targetIndex] = targetPiece;
         grid[index] = oldPiece;
@@ -79,11 +78,17 @@ int Player::makeMove(int y1, int x1, int y2, int x2, Piece **grid,
 
     grid[targetIndex]->setX(x2);
     grid[targetIndex]->setY(y2);
-    if (targetPiece != nullptr) {
-        // capture
-        delete targetPiece;
-    }
+
     grid[targetIndex]->setJustMoved(true);
+
+    // if this was en passant, the captured piece is on a different square
+    if (grid[targetIndex]->getType() == PieceType::PAWN) {
+        Pawn *pawn = dynamic_cast<Pawn *>(grid[targetIndex]);
+        if (pawn->getJustEnPassant()) {
+            grid[convertCors(y1, x2)] = nullptr;
+            pawn->setJustEnPassant(false);
+        }
+    }
 
     if (opponent->isUnderCheck(grid, this)) {
         opponent->setUnderCheck(true);
@@ -103,10 +108,3 @@ int Player::getMaterial() const {
 void Player::setMaterial(int x) {
     material = x;
 }
-
-/**
- * -3: invalid notation
- * -2: Your king is under check.
- * -1: King will be in check.
- * 0: (success)
- */
