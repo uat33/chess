@@ -1,22 +1,44 @@
 #include "../include/piece.h"
 #include "piece.h"
 
-string pieceString(PieceType t) {
+string pieceString(PieceType t, Color c) {
+    const std::string whitePieces[] = {
+        "\u2659",  // PAWN
+        "\u2656",  // ROOK
+        "\u2658",  // KNIGHT
+        "\u2657",  // BISHOP
+        "\u2655",  // QUEEN
+        "\u2654"   // KING
+    };
+
+    const std::string blackPieces[] = {
+        "\u265F",  // PAWN
+        "\u265C",  // ROOK
+        "\u265E",  // KNIGHT
+        "\u265D",  // BISHOP
+        "\u265B",  // QUEEN
+        "\u265A"   // KING
+    };
+
+    // Determine which array of pieces to use based on color
+    const std::string *pieces = (c == Color::WHITE) ? whitePieces : blackPieces;
+
+    // Return the appropriate piece string based on PieceType
     switch (t) {
         case PieceType::PAWN:
-            return "\u2659";
+            return pieces[0];
         case PieceType::ROOK:
-            return "\u2656";
+            return pieces[1];
         case PieceType::KNIGHT:
-            return "\u2658";
+            return pieces[2];
         case PieceType::BISHOP:
-            return "\u2657";
+            return pieces[3];
         case PieceType::QUEEN:
-            return "\u2655";
+            return pieces[4];
         case PieceType::KING:
-            return "\u2654";
+            return pieces[5];
         default:
-            return "Unknown";  // Handle unexpected values gracefully
+            return "Unknown";
     }
 }
 
@@ -57,13 +79,9 @@ Color Piece::getColor() const {
 void Piece::display(Color c) const {
     std::cout << " ";
     if (getJustMoved()) {
-        std::cout << YELLOW << pieceString(type) << RESET << " |";
-        return;
-    }
-    if (c == Color::BLACK) {
-        std::cout << BLACK_TEXT << pieceString(type) << RESET;
+        std::cout << GREEN << pieceString(type, c) << RESET;
     } else {
-        std::cout << pieceString(type);
+        std::cout << pieceString(type, c);
     }
     std::cout << " |";
 }
@@ -111,6 +129,7 @@ bool validLateralMove(int currentY, int currentX, int targetY, int targetX,
     int targetIndex = convertCors(targetY, targetX);
     int currentIndex = convertCors(currentY, currentX);
     Color pieceColor = grid[currentIndex]->getColor();
+
     if (grid[targetIndex] != nullptr &&
         grid[targetIndex]->getColor() == pieceColor) {
         return false;
@@ -127,9 +146,7 @@ bool validDiagonalMove(int currentY, int currentX, int targetY, int targetX,
     if (diffY != diffX || diffX == 0) return false;
 
     int directionX = currentX > targetX ? -1 : 1;
-
     int directionY = currentY > targetY ? -1 : 1;
-
     int startX = currentX + directionX;
     int startY = currentY + directionY;
 
@@ -146,6 +163,7 @@ bool validDiagonalMove(int currentY, int currentX, int targetY, int targetX,
     int targetIndex = convertCors(targetY, targetX);
     int currentIndex = convertCors(currentY, currentX);
     Color pieceColor = grid[currentIndex]->getColor();
+
     if (grid[targetIndex] != nullptr &&
         grid[targetIndex]->getColor() == pieceColor) {
         return false;

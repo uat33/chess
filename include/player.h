@@ -10,19 +10,19 @@ class Player {
     Player(Color c);
     ~Player();
     Piece **getPieces();
-    bool getUnderCheck();
+    Color getColor() const;
+    bool getUnderCheck() const;
     void setUnderCheck(bool x);
-    bool makeMove(int y1, int x1, int y2, int x2, Piece **grid,
-                  Player *opponent);
-    Color getColor();
-    bool isUnderCheck(Piece **grid, Player *opponent);
+    bool isUnderCheck(Piece **grid, Player *opponent) const;
+    int makeMove(int y1, int x1, int y2, int x2, Piece **grid,
+                 Player *opponent);
+    int getMaterial() const;
+    void setMaterial(int x);
 
    private:
     Piece *pieces[NUMPIECES];
     Color pieceColor;
-    int numpieces = NUMPIECES;
     int material = 0;
-    void removePiece(int y, int x);
     bool underCheck = false;
 };
 

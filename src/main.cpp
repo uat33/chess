@@ -17,8 +17,21 @@ int main(int argc, char const *argv[]) {
         }
 
         int result = b->processMove(move, playerturn);
-        if (result == -2) {
+        if (result == -5) {
             std::cout << "Invalid notation." << std::endl;
+            continue;
+        }
+        if (result == -4) {
+            std::cout << "Invalid move. You don't have a piece there."
+                      << std::endl;
+            continue;
+        }
+        if (result == -3) {
+            std::cout << "Invalid move. King is under check." << std::endl;
+            continue;
+        }
+        if (result == -2) {
+            std::cout << "Invalid move. King would be in check." << std::endl;
             continue;
         }
         if (result == -1) {

@@ -26,15 +26,11 @@ void King::setCheck(bool check) {
 void King::display(Color c) const {
     std::cout << " ";
     if (getJustMoved()) {
-        std::cout << YELLOW << pieceString(type) << RESET << " |";
-        return;
-    }
-    if (underCheck) {
-        std::cout << RED << pieceString(type) << RESET;
-    } else if (c == Color::BLACK) {
-        std::cout << BLACK_TEXT << pieceString(type) << RESET;
+        std::cout << GREEN << pieceString(type, c) << RESET;
+    } else if (underCheck) {
+        std::cout << RED << pieceString(type, c) << RESET;
     } else {
-        std::cout << pieceString(type);
+        std::cout << pieceString(type, c);
     }
     std::cout << " |";
 }

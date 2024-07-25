@@ -30,19 +30,17 @@ Piece **Player::getPieces() {
     return pieces;
 }
 
-void Player::removePiece(int y, int x) {}
-
 void Player::setUnderCheck(bool x) {
     underCheck = x;
     King *k = dynamic_cast<King *>(getPieces()[4]);
     k->setCheck(x);
 }
 
-bool Player::getUnderCheck() {
+bool Player::getUnderCheck() const {
     return underCheck;
 }
 
-bool Player::isUnderCheck(Piece **grid, Player *opponent) {
+bool Player::isUnderCheck(Piece **grid, Player *opponent) const {
     Piece **opponentPieces = opponent->getPieces();
     int kingY = pieces[4]->getY();
     int kingX = pieces[4]->getX();
@@ -56,16 +54,16 @@ bool Player::isUnderCheck(Piece **grid, Player *opponent) {
     return false;
 }
 
-bool Player::makeMove(int y1, int x1, int y2, int x2, Piece **grid,
-                      Player *opponent) {
+int Player::makeMove(int y1, int x1, int y2, int x2, Piece **grid,
+                     Player *opponent) {
     int index = convertCors(y1, x1);
     int targetIndex = convertCors(y2, x2);
 
     // check that the chosen tile has a piece belonging to the user
     if (grid[index] == nullptr || grid[index]->getColor() != getColor()) {
-        return false;
+        return -4;
     }
-    if (!grid[index]->isValidMove(y2, x2, grid)) return false;
+    if (!grid[index]->isValidMove(y2, x2, grid)) return -1;
     Piece *targetPiece = grid[targetIndex];
     Piece *oldPiece = grid[index];
     grid[targetIndex] = grid[index];
@@ -75,8 +73,7 @@ bool Player::makeMove(int y1, int x1, int y2, int x2, Piece **grid,
     if (isUnderCheck(grid, opponent)) {
         grid[targetIndex] = targetPiece;
         grid[index] = oldPiece;
-        setUnderCheck(true);
-        return false;
+        return getUnderCheck() ? -3 : -2;
     }
     setUnderCheck(false);
 
@@ -92,9 +89,24 @@ bool Player::makeMove(int y1, int x1, int y2, int x2, Piece **grid,
         opponent->setUnderCheck(true);
     }
 
-    return true;
+    return 0;
 }
 
-Color Player::getColor() {
+Color Player::getColor() const {
     return pieceColor;
 }
+
+int Player::getMaterial() const {
+    return material;
+}
+
+void Player::setMaterial(int x) {
+    material = x;
+}
+
+/**
+ * -3: invalid notation
+ * -2: Your king is under check.
+ * -1: King will be in check.
+ * 0: (success)
+ */

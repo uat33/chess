@@ -75,29 +75,29 @@ void Board::display(Color playerturn) const {
 }
 
 int Board::processMove(const string &s, Color playerturn) {
-    if (s.length() != 5) return -2;
-    if (s[2] != '-') return -2;
+    if (s.length() != 5) return -5;
+    if (s[2] != '-') return -5;
     char file1 = std::tolower(s[0]);
     char file2 = std::tolower(s[3]);
     char row1 = s[1];
     char row2 = s[4];
-    if (file1 < 'a' || file1 > 'h') return -2;
-    if (file2 < 'a' || file2 > 'h') return -2;
-    if (row1 < '1' || row1 > '8') return -2;
-    if (row2 < '1' || row2 > '8') return -2;
+    if (file1 < 'a' || file1 > 'h') return -5;
+    if (file2 < 'a' || file2 > 'h') return -5;
+    if (row1 < '1' || row1 > '8') return -5;
+    if (row2 < '1' || row2 > '8') return -5;
 
     int y1 = 8 - (row1 - '0');
     int x1 = file1 - 'a';
     int y2 = 8 - (row2 - '0');
     int x2 = file2 - 'a';
 
-    bool res;
+    int res;
     if (playerturn == Color::WHITE) {
         res = white->makeMove(y1, x1, y2, x2, grid, black);
     } else {
         res = black->makeMove(y1, x1, y2, x2, grid, white);
     }
-    if (!res) return -1;
+    if (res != 0) return res;
 
     if (lastMoved != nullptr) {
         lastMoved->setJustMoved(false);
