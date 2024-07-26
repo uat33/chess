@@ -5,6 +5,7 @@
 
 #include <cmath>
 #include <iostream>
+#include <memory>
 
 #include "colors.h"
 #include "definitions.h"
@@ -16,6 +17,7 @@ class Piece {
           PieceType t = PieceType::PAWN);
 
     virtual ~Piece();
+    virtual Piece *clone() const = 0;
     int getX() const;
     int getY() const;
     void setX(int x);
@@ -23,7 +25,7 @@ class Piece {
     PieceType getType() const;
     Color getColor() const;
     virtual void display(Color c) const;
-    virtual bool makeMove(int y1, int x1, int y2, int x2, Piece **grid);
+    virtual void makeMove(int y2, int x2, Piece **grid);
     virtual bool isValidMove(int y, int x, Piece **grid) = 0;
     bool getJustMoved() const;
     void setJustMoved(bool x);
@@ -39,6 +41,8 @@ class Piece {
 class Pawn : public Piece {
    public:
     Pawn(int y, int x, Color c);
+    Piece *clone() const override;
+    virtual void makeMove(int y2, int x2, Piece **grid) override;
     bool isValidMove(int y, int x, Piece **grid) override;
     bool getJustMovedTwo();
     void setJustMovedTwo(bool x);
@@ -53,24 +57,33 @@ class Pawn : public Piece {
 class Knight : public Piece {
    public:
     Knight(int y, int x, Color c);
+    Piece *clone() const override;
+
     bool isValidMove(int y, int x, Piece **grid) override;
 };
 
 class Bishop : public Piece {
    public:
     Bishop(int y, int x, Color c);
+    Piece *clone() const override;
+
     bool isValidMove(int y, int x, Piece **grid) override;
 };
 
 class Queen : public Piece {
    public:
     Queen(int y, int x, Color c);
+    Piece *clone() const override;
+
     bool isValidMove(int y, int x, Piece **grid) override;
 };
 
 class Rook : public Piece {
    public:
     Rook(int y, int x, Color c);
+    Piece *clone() const override;
+    virtual void makeMove(int y2, int x2, Piece **grid) override;
+
     bool isValidMove(int y, int x, Piece **grid) override;
     bool getHasMoved();
     void setHasMoved(bool x);
@@ -82,6 +95,8 @@ class Rook : public Piece {
 class King : public Piece {
    public:
     King(int y, int x, Color c);
+    Piece *clone() const override;
+    virtual void makeMove(int y2, int x2, Piece **grid) override;
     void setCheck(bool check);
     void display(Color c) const override;
     bool isValidMove(int y, int x, Piece **grid) override;

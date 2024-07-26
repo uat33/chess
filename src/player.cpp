@@ -54,15 +54,16 @@ bool Player::isUnderCheck(Piece **grid, Player *opponent) const {
     return false;
 }
 
-int Player::makeMove(int y1, int x1, int y2, int x2, Piece **grid,
-                     Player *opponent) {
+bool Player::makeMove(int y1, int x1, int y2, int x2, Piece **grid) {
     int index = convertCors(y1, x1);
-    int targetIndex = convertCors(y2, x2);
 
-    int res = grid[index]->isValidMove(y2, x2, grid);
-    if (res != 0) return res;
+    bool validMove = grid[index]->isValidMove(y2, x2, grid);
 
-    return grid[index]->makeMove(y1, x1, y2, x2, grid);
+    if (!validMove) return validMove;
+
+    grid[index]->makeMove(y2, x2, grid);
+
+    return true;
 }
 
 Color Player::getColor() const {

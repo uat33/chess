@@ -2,6 +2,9 @@
 
 Pawn::Pawn(int y, int x, Color c) : Piece(y, x, c, PieceType::PAWN) {}
 
+Piece *Pawn::clone() const {
+    return new Pawn(*this);
+}
 bool Pawn::isValidMove(int targetY, int targetX, Piece **grid) {
     int currentY = getY();
     int currentX = getX();
@@ -9,7 +12,6 @@ bool Pawn::isValidMove(int targetY, int targetX, Piece **grid) {
 
     int direction = 1;
     int startingRow = 1;
-
     if (std::fabs(currentY - targetY) > 2) {
         return false;
     }
@@ -26,7 +28,6 @@ bool Pawn::isValidMove(int targetY, int targetX, Piece **grid) {
     if (std::fabs(currentX - targetX) > 1) {
         return false;
     }
-
     // two squares is only allowed if this is the starting square and it is
     // moving forward
     if (std::fabs(currentY - targetY) == 2) {
@@ -76,6 +77,22 @@ bool Pawn::isValidMove(int targetY, int targetX, Piece **grid) {
     }
 
     return false;
+}
+
+void Pawn::makeMove(int y2, int x2, Piece **grid) {
+    if (std::fabs(y2 - getY()) == 1) {
+        setJustMovedTwo(false);
+    }
+
+    Piece::makeMove(y2, x2, grid);
+
+    if (getJustEnPassant()) {
+        const int direction = getColor() == Color::WHITE ? 1 : -1;
+        grid[convertCors(y2 + direction, x2)] = nullptr;
+        setJustEnPassant(false);
+    }
+
+    // TODO: pawn promotion
 }
 
 void Pawn::setJustMovedTwo(bool x) {

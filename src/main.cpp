@@ -4,6 +4,7 @@
 int main(int argc, char const *argv[]) {
     Board *b = new Board();
     Color playerturn = Color::WHITE;
+
     std::string move;
     while (true) {
         b->display(playerturn);
@@ -44,9 +45,6 @@ int main(int argc, char const *argv[]) {
             playerturn = Color::WHITE;
         }
     }
-    // TODO: make logic for check and checkmate
-    // TODO: make logic for castling
-    // TODO: pawn promotion
     delete b;
     return 0;
 }

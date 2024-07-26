@@ -2,6 +2,9 @@
 #include "piece.h"
 
 Knight::Knight(int y, int x, Color c) : Piece(y, x, c, PieceType::KNIGHT) {}
+Piece* Knight::clone() const {
+    return new Knight(*this);
+}
 
 bool Knight::isValidMove(int targetY, int targetX, Piece** grid) {
     int currentX = getX();

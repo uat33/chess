@@ -1,7 +1,9 @@
 #include "../../include/piece.h"
 
 Queen::Queen(int y, int x, Color c) : Piece(y, x, c, PieceType::QUEEN) {}
-
+Piece* Queen::clone() const {
+    return new Queen(*this);
+}
 bool Queen::isValidMove(int y, int x, Piece** grid) {
     int currentX = getX();
     int currentY = getY();

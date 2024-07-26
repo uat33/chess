@@ -12,12 +12,15 @@ class Board {
     ~Board();
     void display(Color c) const;
     int processMove(const string &s, Color playerturn);
+    void setGridCopy();
+    void revertBoard();
 
    private:
     Player *white;
     Player *black;
     Piece *grid[DIMENSION * DIMENSION];
     Piece *lastMoved = nullptr;
+    Piece *gridCopy[DIMENSION * DIMENSION];
 };
 
 #endif  // BOARD_H

@@ -94,8 +94,8 @@ void Piece::setJustMoved(bool x) {
     justMoved = x;
 }
 
-bool Piece::makeMove(int y1, int x1, int y2, int x2, Piece **grid) {
-    int source = convertCors(y1, x1);
+void Piece::makeMove(int y2, int x2, Piece **grid) {
+    int source = convertCors(getY(), getX());
     int target = convertCors(y2, x2);
     grid[target] = grid[source];
     grid[source] = nullptr;
@@ -122,7 +122,7 @@ bool validLateralMove(int currentY, int currentX, int targetY, int targetX,
     }
 
     const int direction = end - start > 0 ? 1 : -1;
-
+    start += direction;
     // all squares in between must be empty
     while (start != end) {
         int index;
