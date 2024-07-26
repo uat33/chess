@@ -94,6 +94,16 @@ void Piece::setJustMoved(bool x) {
     justMoved = x;
 }
 
+bool Piece::makeMove(int y1, int x1, int y2, int x2, Piece **grid) {
+    int source = convertCors(y1, x1);
+    int target = convertCors(y2, x2);
+    grid[target] = grid[source];
+    grid[source] = nullptr;
+    grid[target]->setX(x2);
+    grid[target]->setY(y2);
+    grid[target]->setJustMoved(true);
+}
+
 bool validLateralMove(int currentY, int currentX, int targetY, int targetX,
                       Piece **grid) {
     // must be the same x or the same y but not both

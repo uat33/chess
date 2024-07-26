@@ -59,43 +59,10 @@ int Player::makeMove(int y1, int x1, int y2, int x2, Piece **grid,
     int index = convertCors(y1, x1);
     int targetIndex = convertCors(y2, x2);
 
-    // check that the chosen tile has a piece belonging to the user
-    if (grid[index] == nullptr || grid[index]->getColor() != getColor()) {
-        return -4;
-    }
-    if (!grid[index]->isValidMove(y2, x2, grid)) return -1;
-    Piece *targetPiece = grid[targetIndex];
-    Piece *oldPiece = grid[index];
-    grid[targetIndex] = grid[index];
-    grid[index] = nullptr;
+    int res = grid[index]->isValidMove(y2, x2, grid);
+    if (res != 0) return res;
 
-    if (isUnderCheck(grid, opponent)) {
-        grid[targetIndex] = targetPiece;
-        grid[index] = oldPiece;
-        return getUnderCheck() ? -3 : -2;
-    }
-    setUnderCheck(false);
-
-    grid[targetIndex]->setX(x2);
-    grid[targetIndex]->setY(y2);
-
-    grid[targetIndex]->setJustMoved(true);
-    // testing
-
-    // if this was en passant, the captured piece is on a different square
-    if (grid[targetIndex]->getType() == PieceType::PAWN) {
-        Pawn *pawn = dynamic_cast<Pawn *>(grid[targetIndex]);
-        if (pawn->getJustEnPassant()) {
-            grid[convertCors(y1, x2)] = nullptr;
-            pawn->setJustEnPassant(false);
-        }
-    }
-
-    if (opponent->isUnderCheck(grid, this)) {
-        opponent->setUnderCheck(true);
-    }
-
-    return 0;
+    return grid[index]->makeMove(y1, x1, y2, x2, grid);
 }
 
 Color Player::getColor() const {

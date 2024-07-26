@@ -23,6 +23,7 @@ class Piece {
     PieceType getType() const;
     Color getColor() const;
     virtual void display(Color c) const;
+    virtual bool makeMove(int y1, int x1, int y2, int x2, Piece **grid);
     virtual bool isValidMove(int y, int x, Piece **grid) = 0;
     bool getJustMoved() const;
     void setJustMoved(bool x);
