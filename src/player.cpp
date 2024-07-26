@@ -80,6 +80,7 @@ int Player::makeMove(int y1, int x1, int y2, int x2, Piece **grid,
     grid[targetIndex]->setY(y2);
 
     grid[targetIndex]->setJustMoved(true);
+    // testing
 
     // if this was en passant, the captured piece is on a different square
     if (grid[targetIndex]->getType() == PieceType::PAWN) {
