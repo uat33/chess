@@ -101,14 +101,12 @@ void Piece::makeMove(int y2, int x2, Piece **grid) {
     grid[source] = nullptr;
     grid[target]->setX(x2);
     grid[target]->setY(y2);
-    grid[target]->setJustMoved(true);
 }
 
 bool validLateralMove(int currentY, int currentX, int targetY, int targetX,
                       Piece **grid) {
     // must be the same x or the same y but not both
     if (!((currentY == targetY) ^ (currentX == targetX))) return false;
-
     int start, end;
     bool movingVertically;
     if (currentY == targetY) {

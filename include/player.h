@@ -23,6 +23,7 @@ class Player {
     Color pieceColor;
     int material = 0;
     bool underCheck = false;
+    Piece *gridCopy[DIMENSION * DIMENSION];
 };
 
 #endif

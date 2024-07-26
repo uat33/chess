@@ -4,14 +4,21 @@
 int main(int argc, char const *argv[]) {
     Board *b = new Board();
     Color playerturn = Color::WHITE;
-
+    std::vector<std::string> myVector = {"e2-e4", "d7-d5", "e4-d5", "d8-d5",
+                                         "b1-c3", "d5-e4", "g1-f3"};
+    int index = 0;
     std::string move;
     while (true) {
         b->display(playerturn);
 
         std::cout << "Enter a move (enter 'resign' to resign): " << std::endl;
         std::cout << "Format `{tile 1}-{tile 2}` (e.g e2-e4)" << std::endl;
-        std::getline(std::cin, move);
+
+        if (index < myVector.size()) {
+            move = myVector[index++];
+        } else {
+            std::getline(std::cin, move);
+        }
 
         if (move == "resign") {
             break;

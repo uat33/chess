@@ -14,6 +14,7 @@ class Board {
     int processMove(const string &s, Color playerturn);
     void setGridCopy();
     void revertBoard();
+    void revertPlayers();
 
    private:
     Player *white;

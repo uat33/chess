@@ -107,7 +107,6 @@ int Board::processMove(const string &s, Color playerturn) {
     }
 
     // make the move, but first save the current board
-    bool res;
     setGridCopy();
     Player *current;
     Player *opposition;
@@ -119,7 +118,10 @@ int Board::processMove(const string &s, Color playerturn) {
         current = black;
         opposition = white;
     }
-    res = current->makeMove(y1, x1, y2, x2, grid);
+    bool currentlyUnderCheck = current->getUnderCheck();
+    bool currentMaterial = current->getMaterial();
+    bool oppUnderCheck = opposition->getUnderCheck();
+    bool res = current->makeMove(y1, x1, y2, x2, grid);
     // if the error
     if (!res) return -1;
 
@@ -127,11 +129,13 @@ int Board::processMove(const string &s, Color playerturn) {
     // reset the board
     if (current->isUnderCheck(grid, opposition)) {
         revertBoard();
+        current->setUnderCheck(currentlyUnderCheck);
+        current->setMaterial(currentMaterial);
+        grid[convertCors(y1, x1)]->setX(x1);
+        grid[convertCors(y1, x1)]->setY(y1);
 
         return current->getUnderCheck() ? -3 : -2;
     }
-    // TODO: most likely object cloning issue causing incorrect attributes on
-    // revert
     // TODO: pawn promotion
     // TODO: checkmate
     current->setUnderCheck(false);
@@ -140,6 +144,7 @@ int Board::processMove(const string &s, Color playerturn) {
         lastMoved->setJustMoved(false);
     }
     lastMoved = grid[convertCors(y2, x2)];
+    lastMoved->setJustMoved(true);
     if (opposition->isUnderCheck(grid, current)) {
         opposition->setUnderCheck(true);
     }

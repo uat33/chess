@@ -81,8 +81,10 @@ void King::display(Color c) const {
 
 void King::makeMove(int y2, int x2, Piece** grid) {
     int target = convertCors(y2, x2);
-    if (grid[target]->getColor() != getColor()) {
+    if (grid[target] == nullptr || grid[target]->getColor() != getColor()) {
         Piece::makeMove(y2, x2, grid);
+        hasMoved = true;
+        std::cout << "cors are now: " << getX() << " " << getY() << std::endl;
         return;
     }
     int kingSquare = convertCors(getX(), getY());
@@ -99,5 +101,4 @@ void King::makeMove(int y2, int x2, Piece** grid) {
     grid[target] = nullptr;
     grid[kingSquare] = nullptr;
     hasMoved = true;
-    setJustMoved(true);
 }
