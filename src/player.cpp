@@ -71,16 +71,6 @@ bool Player::makeMove(int y1, int x1, int y2, int x2, Piece **grid) {
         grid[index]->makeMove(y2, x2, grid);
     }
     return validMove;
-    // int targetIndex = convertCors(y2, x2);
-    // grid[targetIndex]->setX(x2);
-    // grid[targetIndex]->setY(y2);
-    // Piece **pieces = getPieces();
-    // for (int i = 0; i < 16; i++) {
-    //     if (pieces[i]->getY() == y1 && pieces[i]->getX() == x1) {
-    //         pieces[i]->setX(x2);
-    //         pieces[i]->setY(y2);
-    //     }
-    // }
 }
 
 Player *Player::clone() {
@@ -116,6 +106,7 @@ void Player::removePiece(int y, int x) {
     for (int i = 0; i < NUMPIECES; i++) {
         if (pieces[i] != nullptr && pieces[i]->getY() == y &&
             pieces[i]->getX() == x) {
+            delete pieces[i];
             pieces[i] = nullptr;
         }
     }
