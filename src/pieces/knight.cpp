@@ -11,8 +11,9 @@ bool Knight::isValidMove(int targetY, int targetX, Piece** grid) {
     int currentY = getY();
 
     int index = convertCors(targetY, targetX);
-    if (grid[index] != nullptr && grid[index]->getColor() == getColor())
+    if (grid[index] != nullptr && grid[index]->getColor() == getColor()) {
         return false;
+    }
     if (std::fabs(targetX - currentX) == 2 &&
         std::fabs(targetY - currentY) == 1)
         return true;

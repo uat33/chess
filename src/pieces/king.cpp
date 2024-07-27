@@ -27,10 +27,11 @@ bool King::isValidMove(int y, int x, Piece** grid) {
         int inBetweenCorsIndex = 0;
         // check that there are no pieces in between
         int direction = x < currentX ? -1 : 1;
-        for (int i = currentX + direction; i < x; i += direction) {
+
+        for (int i = currentX + direction; i != x; i += direction) {
             int square = convertCors(y, i);
             inBetweenCors[inBetweenCorsIndex][0] = y;
-            inBetweenCors[inBetweenCorsIndex][1] = i;
+            inBetweenCors[inBetweenCorsIndex++][1] = i;
             if (grid[square] != nullptr) return false;
         }
 
@@ -38,13 +39,11 @@ bool King::isValidMove(int y, int x, Piece** grid) {
         for (int i = 0; i < inBetweenSquares; i++) {
             int inBetweenY = inBetweenCors[i][0];
             int inBetweenX = inBetweenCors[i][1];
-
             for (int j = 0; j < DIMENSION * DIMENSION; j++) {
                 if (grid[j] != nullptr && grid[j]->getColor() != getColor() &&
-                    grid[j]->getType() != getType()) {
-                    if (grid[j]->isValidMove(inBetweenY, inBetweenX, grid)) {
-                        return false;
-                    }
+                    grid[j]->getType() != getType() &&
+                    grid[j]->isValidMove(inBetweenY, inBetweenX, grid)) {
+                    return false;
                 }
             }
         }
@@ -86,16 +85,25 @@ void King::makeMove(int y2, int x2, Piece** grid) {
         hasMoved = true;
         return;
     }
-    int kingSquare = convertCors(getX(), getY());
+    int kingSquare = convertCors(getY(), getX());
+
+    int newKingSquare, newRookSquare;
     // this is a short castle
     if (x2 > getX()) {
-        grid[convertCors(y2, x2 - 1)] = grid[kingSquare];
-        grid[convertCors(y2, x2 - 2)] = grid[target];
-
+        newKingSquare = x2 - 1;
+        newRookSquare = x2 - 2;
     } else {  // long castle
-        grid[convertCors(y2, x2 + 2)] = grid[kingSquare];
-        grid[convertCors(y2, x2 + 3)] = grid[target];
+        newKingSquare = x2 + 2;
+        newRookSquare = x2 + 3;
     }
+    grid[kingSquare]->setX(newKingSquare);
+    grid[target]->setX(newRookSquare);
+    Rook* rook = dynamic_cast<Rook*>(grid[target]);
+    rook->setHasMoved(true);
+    grid[convertCors(y2, newKingSquare)] = grid[kingSquare];
+    grid[convertCors(y2, newRookSquare)] = grid[target];
+    grid[convertCors(y2, newKingSquare)]->setJustMoved(true);
+    grid[convertCors(y2, newRookSquare)]->setJustMoved(true);
 
     grid[target] = nullptr;
     grid[kingSquare] = nullptr;

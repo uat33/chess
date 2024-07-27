@@ -95,6 +95,7 @@ static bool validateInput(const string &s) {
 }
 
 int Board::processMove(const string &s, Color playerturn) {
+    // invalid notation
     if (!validateInput(s)) return -5;
     char file1 = std::tolower(s[0]);
     char file2 = std::tolower(s[3]);
@@ -106,13 +107,12 @@ int Board::processMove(const string &s, Color playerturn) {
     int x2 = file2 - 'a';
 
     // Check that this player has a piece on that square.
-
     if (grid[convertCors(y1, x1)] == nullptr ||
         grid[convertCors(y1, x1)]->getColor() != playerturn) {
         return -4;
     }
 
-    // make the move, but first save the current board
+    // make the move
     Player *current;
     Player *opposition;
     if (playerturn == Color::WHITE) {
@@ -123,22 +123,43 @@ int Board::processMove(const string &s, Color playerturn) {
         current = black;
         opposition = white;
     }
-    bool res = current->makeMove(y1, x1, y2, x2, grid);
-    // if the error
-    if (!res) return -1;
+
+    bool canMove = current->makeMove(y1, x1, y2, x2, grid);
+    // if false, this was not valid move due to the piece not being able to move
+    // there
+    if (!canMove) return -1;
 
     // if this move causes the player to be under check it is invalid.
     // reset the board
     if (current->isUnderCheck(grid, opposition)) {
         return current->getUnderCheck() ? -3 : -2;
     }
+
     current->setUnderCheck(false);
 
     if (lastMoved != nullptr) {
         lastMoved->setJustMoved(false);
+    } else {
+        // it's possible this is the first move, in which case this will do
+        // nothing. but if this was a castle, check the back row and remove the
+        // last moved flag from all the pieces there
+        for (int i = 0; i < DIMENSION; i++) {
+            int r1 = convertCors(0, i);
+            int r2 = convertCors(7, i);
+            if (grid[r1] != nullptr) {
+                grid[r1]->setJustMoved(false);
+            }
+            if (grid[r2] != nullptr) {
+                grid[r2]->setJustMoved(false);
+            }
+        }
     }
     lastMoved = grid[convertCors(y2, x2)];
-    lastMoved->setJustMoved(true);
+
+    // if it was a castle, the target square will be empty
+    if (lastMoved != nullptr) {
+        lastMoved->setJustMoved(true);
+    }
 
     // check if it was a capture
     opposition->removePiece(y2, x2);

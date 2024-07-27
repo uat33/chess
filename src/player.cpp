@@ -15,7 +15,6 @@ Player::Player(Color c, bool init) {
     for (int i = 8; i < NUMPIECES; i++) {
         pieces[i] = new Pawn(row2, i - 8, c);
     }
-
     pieces[0] = new Rook(row1, 0, c);
     pieces[1] = new Knight(row1, 1, c);
     pieces[2] = new Bishop(row1, 2, c);
@@ -65,12 +64,16 @@ bool Player::isUnderCheck(Piece **grid, Player *opponent) const {
 
 bool Player::makeMove(int y1, int x1, int y2, int x2, Piece **grid) {
     int index = convertCors(y1, x1);
+
     bool validMove = grid[index]->isValidMove(y2, x2, grid);
-    if (!validMove) return validMove;
-    grid[index]->makeMove(y2, x2, grid);
-    int targetIndex = convertCors(y2, x2);
-    grid[targetIndex]->setX(x2);
-    grid[targetIndex]->setY(y2);
+
+    if (validMove) {
+        grid[index]->makeMove(y2, x2, grid);
+    }
+    return validMove;
+    // int targetIndex = convertCors(y2, x2);
+    // grid[targetIndex]->setX(x2);
+    // grid[targetIndex]->setY(y2);
     // Piece **pieces = getPieces();
     // for (int i = 0; i < 16; i++) {
     //     if (pieces[i]->getY() == y1 && pieces[i]->getX() == x1) {
@@ -78,7 +81,6 @@ bool Player::makeMove(int y1, int x1, int y2, int x2, Piece **grid) {
     //         pieces[i]->setY(y2);
     //     }
     // }
-    return true;
 }
 
 Player *Player::clone() {
