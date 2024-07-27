@@ -107,7 +107,6 @@ int Board::processMove(const string &s, Color playerturn) {
     }
 
     // make the move, but first save the current board
-    setGridCopy();
     Player *current;
     Player *opposition;
     if (playerturn == Color::WHITE) {
@@ -118,9 +117,6 @@ int Board::processMove(const string &s, Color playerturn) {
         current = black;
         opposition = white;
     }
-    bool currentlyUnderCheck = current->getUnderCheck();
-    bool currentMaterial = current->getMaterial();
-    bool oppUnderCheck = opposition->getUnderCheck();
     bool res = current->makeMove(y1, x1, y2, x2, grid);
     // if the error
     if (!res) return -1;
@@ -128,16 +124,9 @@ int Board::processMove(const string &s, Color playerturn) {
     // if this move causes the player to be under check it is invalid.
     // reset the board
     if (current->isUnderCheck(grid, opposition)) {
-        revertBoard();
-        current->setUnderCheck(currentlyUnderCheck);
-        current->setMaterial(currentMaterial);
-        grid[convertCors(y1, x1)]->setX(x1);
-        grid[convertCors(y1, x1)]->setY(y1);
-
         return current->getUnderCheck() ? -3 : -2;
     }
-    // TODO: pawn promotion
-    // TODO: checkmate
+
     current->setUnderCheck(false);
 
     if (lastMoved != nullptr) {
@@ -151,18 +140,42 @@ int Board::processMove(const string &s, Color playerturn) {
     return 0;
 }
 
-void Board::setGridCopy() {
-    for (int i = 0; i < DIMENSION * DIMENSION; i++) {
-        if (grid[i]) {
-            gridCopy[i] = grid[i]->clone();
+Board *Board::clone() {
+    Board *newBoard = new Board();
+
+    newBoard->white = this->white->clone();
+    newBoard->black = this->black->clone();
+
+    Piece **whitePieces = newBoard->white->getPieces();
+    Piece **blackPieces = newBoard->black->getPieces();
+
+    for (int i = 0; i < 16; i++) {
+        if (whitePieces[i] != nullptr) {
+            int x = whitePieces[i]->getX();
+            int y = whitePieces[i]->getY();
+            newBoard->grid[convertCors(y, x)] = whitePieces[i];
         } else {
-            gridCopy[i] = nullptr;
+            int x = blackPieces[i]->getX();
+            int y = blackPieces[i]->getY();
+            newBoard->grid[convertCors(y, x)] = blackPieces[i];
         }
     }
-}
 
-void Board::revertBoard() {
-    for (int i = 0; i < DIMENSION * DIMENSION; i++) {
-        grid[i] = gridCopy[i];
+    for (int i = 0; i < DIMENSION * DIMENSION; ++i) {
+        if (this->grid[i] != nullptr) {
+            newBoard->grid[i] = this->grid[i]->clone();
+        } else {
+            newBoard->grid[i] = nullptr;
+        }
     }
+
+    if (this->lastMoved != nullptr) {
+        int x = this->lastMoved->getX();
+        int y = this->lastMoved->getY();
+        newBoard->lastMoved = newBoard->grid[convertCors(y, x)];
+    } else {
+        newBoard->lastMoved = nullptr;
+    }
+
+    return newBoard;
 }

@@ -17,13 +17,13 @@ class Player {
     bool makeMove(int y1, int x1, int y2, int x2, Piece **grid);
     int getMaterial() const;
     void setMaterial(int x);
+    Player *clone();
 
    private:
     Piece *pieces[NUMPIECES];
     Color pieceColor;
     int material = 0;
     bool underCheck = false;
-    Piece *gridCopy[DIMENSION * DIMENSION];
 };
 
 #endif

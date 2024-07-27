@@ -1,6 +1,6 @@
 # Compiler options
 CXX = g++
-CXXFLAGS = -std=c++11 -Wall
+CXXFLAGS = -std=c++20 -Wall
 
 # Directories
 SRC_DIR = src

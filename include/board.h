@@ -11,17 +11,17 @@ class Board {
     Board();
     ~Board();
     void display(Color c) const;
+    void setBoardCopy();
+    Board *revertBoard();
     int processMove(const string &s, Color playerturn);
-    void setGridCopy();
-    void revertBoard();
-    void revertPlayers();
+    Board *clone();
+    Player *white;
 
    private:
-    Player *white;
     Player *black;
     Piece *grid[DIMENSION * DIMENSION];
     Piece *lastMoved = nullptr;
-    Piece *gridCopy[DIMENSION * DIMENSION];
+    Board *boardCopy;
 };
 
 #endif  // BOARD_H

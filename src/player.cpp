@@ -44,6 +44,7 @@ bool Player::isUnderCheck(Piece **grid, Player *opponent) const {
     Piece **opponentPieces = opponent->getPieces();
     int kingY = pieces[4]->getY();
     int kingX = pieces[4]->getX();
+
     for (int i = 0; i < 16; i++) {
         if (opponentPieces[i] != nullptr &&
             opponentPieces[i]->isValidMove(kingY, kingX, grid)) {
@@ -59,8 +60,34 @@ bool Player::makeMove(int y1, int x1, int y2, int x2, Piece **grid) {
     bool validMove = grid[index]->isValidMove(y2, x2, grid);
     if (!validMove) return validMove;
     grid[index]->makeMove(y2, x2, grid);
-
+    int targetIndex = convertCors(y2, x2);
+    grid[targetIndex]->setX(x2);
+    grid[targetIndex]->setY(y2);
+    Piece **pieces = getPieces();
+    for (int i = 0; i < 16; i++) {
+        if (pieces[i]->getY() == y1 && pieces[i]->getX() == x1) {
+            pieces[i]->setX(x2);
+            pieces[i]->setY(y2);
+        }
+    }
     return true;
+}
+
+Player *Player::clone() {
+    Player *newPlayer = new Player(pieceColor);
+
+    for (int i = 0; i < NUMPIECES; ++i) {
+        if (pieces[i] != nullptr) {
+            newPlayer->pieces[i] = pieces[i]->clone();
+        } else {
+            newPlayer->pieces[i] = nullptr;
+        }
+    }
+
+    newPlayer->material = material;
+    newPlayer->underCheck = underCheck;
+
+    return newPlayer;
 }
 
 Color Player::getColor() const {
