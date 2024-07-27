@@ -14,32 +14,24 @@ static void displayClone(Board *b, Color c) {
 }
 void Game::startGame() {
     std::string move;
-    std::vector<string> moves = {"e2-e4", "d7-d5", "e4-d5",
-                                 "d8-d5", "b1-c3", "d5-e4"};
-    int index = 0;
+
     while (true) {
-        // displayBoard();
+        displayBoard();
         std::cout << "Enter a move (enter 'resign' to resign): " << std::endl;
         std::cout << "Format `{tile 1}-{tile 2}` (e.g e2-e4)" << std::endl;
 
-        if (index < moves.size()) {
-            move = moves[index++];
-        } else {
-            std::getline(std::cin, move);
-        }
+        std::getline(std::cin, move);
         if (move == "resign") {
             break;
         }
         boardCopy = board->clone();
+
         int res = processMove(move);
-        displayBoard();
-        displayClone(boardCopy, playerturn);
-        std::cout << "result is " << res << std::endl;
         if (res == -2 || res == -3) {
             board = boardCopy->clone();
-            displayBoard();
             continue;
         }
+        if (res != 0) continue;
 
         if (playerturn == Color::WHITE) {
             playerturn = Color::BLACK;

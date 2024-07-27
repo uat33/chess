@@ -97,7 +97,6 @@ void Piece::setJustMoved(bool x) {
 void Piece::makeMove(int y2, int x2, Piece **grid) {
     int source = convertCors(getY(), getX());
     int target = convertCors(y2, x2);
-
     grid[target] = grid[source];
     grid[source] = nullptr;
     grid[target]->setX(x2);

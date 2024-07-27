@@ -36,7 +36,7 @@ Board::~Board() {
 static void printHorizontalLine() {
     int length = 32;
     std::cout << "   ";
-    for (int i = 0; i < length; ++i) {
+    for (int i = 0; i < length; i++) {
         std::cout << "\u2500";  // Unicode character for horizontal line (─)
     }
     std::cout << std::endl;
@@ -126,7 +126,6 @@ int Board::processMove(const string &s, Color playerturn) {
     if (current->isUnderCheck(grid, opposition)) {
         return current->getUnderCheck() ? -3 : -2;
     }
-
     current->setUnderCheck(false);
 
     if (lastMoved != nullptr) {
@@ -134,6 +133,9 @@ int Board::processMove(const string &s, Color playerturn) {
     }
     lastMoved = grid[convertCors(y2, x2)];
     lastMoved->setJustMoved(true);
+
+    // check if it was a capture
+    opposition->removePiece(y2, x2);
     if (opposition->isUnderCheck(grid, current)) {
         opposition->setUnderCheck(true);
     }
@@ -149,23 +151,22 @@ Board *Board::clone() {
     Piece **whitePieces = newBoard->white->getPieces();
     Piece **blackPieces = newBoard->black->getPieces();
 
+    for (int i = 0; i < DIMENSION * DIMENSION; i++) {
+        if (this->grid[i] == nullptr) {
+            newBoard->grid[i] = nullptr;
+        }
+    }
+
     for (int i = 0; i < 16; i++) {
         if (whitePieces[i] != nullptr) {
             int x = whitePieces[i]->getX();
             int y = whitePieces[i]->getY();
             newBoard->grid[convertCors(y, x)] = whitePieces[i];
-        } else {
+        }
+        if (blackPieces[i] != nullptr) {
             int x = blackPieces[i]->getX();
             int y = blackPieces[i]->getY();
             newBoard->grid[convertCors(y, x)] = blackPieces[i];
-        }
-    }
-
-    for (int i = 0; i < DIMENSION * DIMENSION; ++i) {
-        if (this->grid[i] != nullptr) {
-            newBoard->grid[i] = this->grid[i]->clone();
-        } else {
-            newBoard->grid[i] = nullptr;
         }
     }
 

@@ -17,6 +17,7 @@ class Player {
     bool makeMove(int y1, int x1, int y2, int x2, Piece **grid);
     int getMaterial() const;
     void setMaterial(int x);
+    void removePiece(int y, int x);
     Player *clone();
 
    private:
