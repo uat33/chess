@@ -3,9 +3,16 @@
 #include "player.h"
 
 Player::Player(Color c) {
+    for (int i = 0; i < NUMPIECES; i++) {
+        pieces[i] = nullptr;
+    }
+    pieceColor = c;
+}
+
+Player::Player(Color c, bool init) {
     int row1 = c == Color::BLACK ? 0 : 7;
     int row2 = c == Color::BLACK ? 1 : 6;
-    for (int i = 8; i < 16; i++) {
+    for (int i = 8; i < NUMPIECES; i++) {
         pieces[i] = new Pawn(row2, i - 8, c);
     }
 
@@ -21,8 +28,9 @@ Player::Player(Color c) {
 }
 
 Player::~Player() {
-    for (int i = 0; i < 16; ++i) {
+    for (int i = 0; i < NUMPIECES; i++) {
         delete pieces[i];
+        pieces[i] = nullptr;
     }
 }
 
@@ -76,7 +84,7 @@ bool Player::makeMove(int y1, int x1, int y2, int x2, Piece **grid) {
 Player *Player::clone() {
     Player *newPlayer = new Player(pieceColor);
 
-    for (int i = 0; i < NUMPIECES; ++i) {
+    for (int i = 0; i < NUMPIECES; i++) {
         if (pieces[i] != nullptr) {
             newPlayer->pieces[i] = pieces[i]->clone();
         } else {

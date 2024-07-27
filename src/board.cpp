@@ -1,8 +1,14 @@
 #include "../include/board.h"
 
-Board::Board() {
-    white = new Player(Color::WHITE);
-    black = new Player(Color::BLACK);
+Board::Board() : black(nullptr), white(nullptr), lastMoved(nullptr) {
+    for (int i = 0; i < DIMENSION * DIMENSION; i++) {
+        grid[i] = nullptr;
+    }
+}
+
+Board::Board(bool init) {
+    white = new Player(Color::WHITE, true);
+    black = new Player(Color::BLACK, true);
 
     Piece **whitePieces = white->getPieces();
     Piece **blackPieces = black->getPieces();
@@ -150,12 +156,6 @@ Board *Board::clone() {
 
     Piece **whitePieces = newBoard->white->getPieces();
     Piece **blackPieces = newBoard->black->getPieces();
-
-    for (int i = 0; i < DIMENSION * DIMENSION; i++) {
-        if (this->grid[i] == nullptr) {
-            newBoard->grid[i] = nullptr;
-        }
-    }
 
     for (int i = 0; i < 16; i++) {
         if (whitePieces[i] != nullptr) {

@@ -1,12 +1,11 @@
 #include "game.h"
 
 Game::Game() {
-    board = new Board();
+    board = new Board(true);
 }
 
 Game::~Game() {
     delete board;
-    // delete boardCopy;
 }
 
 static void displayClone(Board *b, Color c) {
@@ -15,12 +14,19 @@ static void displayClone(Board *b, Color c) {
 void Game::startGame() {
     std::string move;
 
+    std::vector<string> moves = {"e2-e4", "d7-d5", "e4-d5", "d8-d5", "a2-a3",
+                                 "d5-e4", "g1-f3", "e1-e2", "f1-e2", "resign"};
+    int index = 0;
     while (true) {
         displayBoard();
         std::cout << "Enter a move (enter 'resign' to resign): " << std::endl;
         std::cout << "Format `{tile 1}-{tile 2}` (e.g e2-e4)" << std::endl;
 
-        std::getline(std::cin, move);
+        if (index < moves.size()) {
+            move = moves[index++];
+        } else {
+            std::getline(std::cin, move);
+        }
         if (move == "resign") {
             break;
         }
@@ -28,9 +34,11 @@ void Game::startGame() {
 
         int res = processMove(move);
         if (res == -2 || res == -3) {
-            board = boardCopy->clone();
+            delete board;
+            board = boardCopy;
             continue;
         }
+        delete boardCopy;
         if (res != 0) continue;
 
         if (playerturn == Color::WHITE) {

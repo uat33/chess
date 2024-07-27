@@ -8,6 +8,7 @@
 class Player {
    public:
     Player(Color c);
+    Player(Color c, bool init);
     ~Player();
     Piece **getPieces();
     Color getColor() const;

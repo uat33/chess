@@ -9,6 +9,7 @@
 class Board {
    public:
     Board();
+    Board(bool init);
     ~Board();
     void display(Color c) const;
     int processMove(const string &s, Color playerturn);
@@ -19,7 +20,7 @@ class Board {
     Player *white;
     Piece *grid[DIMENSION * DIMENSION];
     Piece *lastMoved = nullptr;
-    Board *boardCopy;
+    Board *boardCopy = nullptr;
 };
 
 #endif  // BOARD_H
