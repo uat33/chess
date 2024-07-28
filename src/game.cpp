@@ -10,12 +10,18 @@ Game::~Game() {
 
 void Game::startGame() {
     string move;
+    std::vector<string> moves = {"c2-c3", "f7-f6", "e2-e3", "g7-g5", "d1-h5"};
+    int index = 0;
     while (true) {
         displayBoard();
         std::cout << "Enter a move (enter 'resign' to resign): " << std::endl;
         std::cout << "Format `{tile 1}-{tile 2}` (e.g e2-e4)" << std::endl;
 
-        std::getline(std::cin, move);
+        if (index < moves.size()) {
+            move = moves[index++];
+        } else {
+            std::getline(std::cin, move);
+        }
 
         if (move == "resign") {
             break;
@@ -32,8 +38,10 @@ void Game::startGame() {
             continue;
         }
         // otherwise delete the copy
-        delete boardCopy;
+        // check if game over
+        displayBoard();
 
+        delete boardCopy;
         // this checks if it was invalid for any reason that doesn't require a
         // reversion in which case, no action is necessary as the move wouldn't
         // have been made
