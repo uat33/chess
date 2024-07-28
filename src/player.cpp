@@ -121,16 +121,30 @@ void Player::promote(Piece **grid, int y, int x, char piece) {
     updatePiece(p, y, x);
 }
 
+static void removeJustMovedTwoFlag(Piece **pieces, Piece **grid, int y2,
+                                   int x2) {
+    for (int i = 0; i < NUMPIECES; i++) {
+        if (grid[convertCors(y2, x2)] != pieces[i] && pieces[i] != nullptr) {
+            if (pieces[i]->getType() == PieceType::PAWN) {
+                Pawn *pawn = dynamic_cast<Pawn *>(pieces[i]);
+                pawn->setJustMovedTwo(false);
+            }
+        }
+    }
+}
+
 bool Player::makeMove(int y1, int x1, int y2, int x2, Piece **grid) {
     int index = convertCors(y1, x1);
-    std::vector<std::vector<int>> moves = grid[index]->listValidMoves(grid);
-    for (const auto &inner_vec : moves) {
-        std::cout << inner_vec[0] << " " << inner_vec[1] << std::endl;
-    }
     bool validMove = grid[index]->isValidMove(y2, x2, grid);
 
     if (validMove) {
         grid[index]->makeMove(y2, x2, grid);
+
+        // remove the just moved two flag, for all the pawns that aren't this
+        // piece
+        // because none of those moving by two can be the most recent move
+        // anymore
+        removeJustMovedTwoFlag(getPieces(), grid, y2, x2);
 
         int targetIndex = convertCors(y2, x2);
         // check if it is a pawn promotion
