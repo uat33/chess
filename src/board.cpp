@@ -252,3 +252,14 @@ Board *Board::clone() {
 
     return newBoard;
 }
+
+Player *Board::getWhitePlayer() {
+    return white;
+}
+Player *Board::getBlackPlayer() {
+    return black;
+}
+
+Piece **Board::getGrid() {
+    return grid;
+}

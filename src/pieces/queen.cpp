@@ -8,7 +8,6 @@ bool Queen::isValidMove(int y, int x, Piece** grid) {
     std::vector<std::vector<int>> validMoves = listValidMoves(grid);
 
     for (const auto& cor : validMoves) {
-        std::cout << cor[0] << " " << cor[1] << std::endl;
         if (cor[0] == y && cor[1] == x) {
             return true;
         }

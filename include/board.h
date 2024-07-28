@@ -14,6 +14,9 @@ class Board {
     void display(Color c) const;
     int processMove(const string &s, Color playerturn);
     Board *clone();
+    Player *getWhitePlayer();
+    Player *getBlackPlayer();
+    Piece **getGrid();
 
    private:
     Player *black;
