@@ -108,3 +108,9 @@ void King::makeMove(int y2, int x2, Piece** grid) {
     grid[kingSquare] = nullptr;
     hasMoved = true;
 }
+
+std::vector<std::vector<int>> King::listValidMoves(Piece** grid) const {
+    std::vector<std::vector<int>> validMoves;
+
+    return validMoves;
+}

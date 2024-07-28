@@ -29,6 +29,8 @@ class Piece {
     virtual void display(Color c) const;
     virtual void makeMove(int y2, int x2, Piece **grid);
     virtual bool isValidMove(int y, int x, Piece **grid) = 0;
+    virtual std::vector<std::vector<int>> listValidMoves(
+        Piece **grid) const = 0;
 
    protected:
     PieceType type;
@@ -48,6 +50,7 @@ class Pawn : public Piece {
     void setJustMovedTwo(bool x);
     bool getJustEnPassant();
     void setJustEnPassant(bool x);
+    std::vector<std::vector<int>> listValidMoves(Piece **grid) const override;
 
    private:
     bool justMovedTwo = false;
@@ -60,21 +63,22 @@ class Knight : public Piece {
     Piece *clone() const override;
 
     bool isValidMove(int y, int x, Piece **grid) override;
+    std::vector<std::vector<int>> listValidMoves(Piece **grid) const override;
 };
 
 class Bishop : public Piece {
    public:
     Bishop(int y, int x, Color c);
     Piece *clone() const override;
-
     bool isValidMove(int y, int x, Piece **grid) override;
+    std::vector<std::vector<int>> listValidMoves(Piece **grid) const override;
 };
 
 class Queen : public Piece {
    public:
     Queen(int y, int x, Color c);
     Piece *clone() const override;
-
+    std::vector<std::vector<int>> listValidMoves(Piece **grid) const override;
     bool isValidMove(int y, int x, Piece **grid) override;
 };
 
@@ -83,7 +87,7 @@ class Rook : public Piece {
     Rook(int y, int x, Color c);
     Piece *clone() const override;
     virtual void makeMove(int y2, int x2, Piece **grid) override;
-
+    std::vector<std::vector<int>> listValidMoves(Piece **grid) const override;
     bool isValidMove(int y, int x, Piece **grid) override;
     bool getHasMoved();
     void setHasMoved(bool x);
@@ -100,6 +104,7 @@ class King : public Piece {
     void setCheck(bool check);
     void display(Color c) const override;
     bool isValidMove(int y, int x, Piece **grid) override;
+    std::vector<std::vector<int>> listValidMoves(Piece **grid) const override;
 
    private:
     bool underCheck = false;

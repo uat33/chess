@@ -26,3 +26,9 @@ bool Rook::getHasMoved() {
 void Rook::setHasMoved(bool x) {
     justMoved = x;
 }
+
+std::vector<std::vector<int>> Rook::listValidMoves(Piece** grid) const {
+    std::vector<std::vector<int>> validMoves;
+
+    return validMoves;
+}

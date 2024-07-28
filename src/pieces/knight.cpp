@@ -23,3 +23,9 @@ bool Knight::isValidMove(int targetY, int targetX, Piece** grid) {
 
     return false;
 }
+
+std::vector<std::vector<int>> Knight::listValidMoves(Piece** grid) const {
+    std::vector<std::vector<int>> validMoves;
+
+    return validMoves;
+}

@@ -14,3 +14,9 @@ bool Queen::isValidMove(int y, int x, Piece** grid) {
 
     return diagonal || lateral;
 }
+
+std::vector<std::vector<int>> Queen::listValidMoves(Piece** grid) const {
+    std::vector<std::vector<int>> validMoves;
+
+    return validMoves;
+}

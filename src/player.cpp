@@ -123,7 +123,10 @@ void Player::promote(Piece **grid, int y, int x, char piece) {
 
 bool Player::makeMove(int y1, int x1, int y2, int x2, Piece **grid) {
     int index = convertCors(y1, x1);
-
+    std::vector<std::vector<int>> moves = grid[index]->listValidMoves(grid);
+    for (const auto &inner_vec : moves) {
+        std::cout << inner_vec[0] << " " << inner_vec[1] << std::endl;
+    }
     bool validMove = grid[index]->isValidMove(y2, x2, grid);
 
     if (validMove) {
