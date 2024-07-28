@@ -8,40 +8,35 @@ Game::~Game() {
     delete board;
 }
 
-static void displayClone(Board *b, Color c) {
-    b->display(c);
-}
 void Game::startGame() {
-    std::string move;
-
-    std::vector<string> moves = {
-        "e2-e4", "d7-d5", "e4-d5", "d8-d5", "a2-a3", "d5-e4", "g1-f3", "e1-e2",
-        "f1-e2", "a7-a6", "g1-f3", "a6-a5", "e1-h1", "b8-c6", "f1-e1", "c8-g4",
-        "e2-b5", "e8-a8", "e1-e4", "g4-f3", "b2-b4", "g8-f6", "b4-a5", "h7-h6",
-        "a5-a6", "h6-h5", "a6-a7", "h5-h4", "a7-a8"};
-    int index = 0;
+    string move;
     while (true) {
         displayBoard();
         std::cout << "Enter a move (enter 'resign' to resign): " << std::endl;
         std::cout << "Format `{tile 1}-{tile 2}` (e.g e2-e4)" << std::endl;
 
-        if (index < moves.size()) {
-            move = moves[index++];
-        } else {
-            std::getline(std::cin, move);
-        }
+        std::getline(std::cin, move);
+
         if (move == "resign") {
             break;
         }
+        // clone the board so it can be reverted
         boardCopy = board->clone();
 
         int res = processMove(move);
         if (res == -2 || res == -3) {
+            // delete the board with the move (which is invalid)
             delete board;
+            // revert it
             board = boardCopy;
             continue;
         }
+        // otherwise delete the copy
         delete boardCopy;
+
+        // this checks if it was invalid for any reason that doesn't require a
+        // reversion in which case, no action is necessary as the move wouldn't
+        // have been made
         if (res != 0) continue;
 
         if (playerturn == Color::WHITE) {

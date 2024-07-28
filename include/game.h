@@ -9,6 +9,8 @@ class Game {
     Game();
     ~Game();
     void startGame();
+
+   private:
     void displayBoard() const;
     int processMove(const string &move);
     Board *board;

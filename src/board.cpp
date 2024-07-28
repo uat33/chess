@@ -1,5 +1,9 @@
-#include "../include/board.h"
+#include "board.h"
 
+/**
+ * Constructor used to clone the board.
+ * Fill it with null values until the components can be cloned.
+ */
 Board::Board() : black(nullptr), white(nullptr), lastMoved(nullptr) {
     for (int i = 0; i < DIMENSION * DIMENSION; i++) {
         grid[i] = nullptr;
@@ -39,15 +43,22 @@ Board::~Board() {
     delete black;
 }
 
+/**
+ * Output the horizontal line to separate each row of the board.
+ */
 static void printHorizontalLine() {
-    int length = 32;
+    const int NUMDASHES = 32;
     std::cout << "   ";
-    for (int i = 0; i < length; i++) {
+    for (int i = 0; i < NUMDASHES; i++) {
         std::cout << "\u2500";  // Unicode character for horizontal line (─)
     }
     std::cout << std::endl;
 }
 
+/**
+ * Display the board from the point of view of the player specified by
+ * playerturn.
+ */
 void Board::display(Color playerturn) const {
     // fill with row nums based off of whether this is being seen from one
     // player's side or the other
@@ -65,7 +76,7 @@ void Board::display(Color playerturn) const {
 
     printHorizontalLine();
     for (int i : arr) {
-        std::cout << 8 - i << " |";
+        std::cout << DIMENSION - i << " |";
         for (int j : arr) {
             int index = convertCors(i, j);
             if (grid[index] == nullptr) {
@@ -77,9 +88,26 @@ void Board::display(Color playerturn) const {
         std::cout << std::endl;
         printHorizontalLine();
     }
-    std::cout << fileLetters << std::endl;
+    std::cout << fileLetters << std::endl << std::endl;
+
+    // print material advantage
+    int advantage;
+    // this is how much each player has lost
+    int wLoss = white->getMaterial();
+    int bLoss = black->getMaterial();
+    if (playerturn == Color::WHITE) {
+        advantage = bLoss - wLoss;
+    } else {
+        advantage = wLoss - bLoss;
+    }
+
+    std::cout << "Your material difference is: " << (advantage > 0 ? "+" : "")
+              << advantage << std::endl;
 }
 
+/**
+ * Validate that the move's notation is valid.
+ */
 static bool validateInput(const string &s) {
     if (s.length() != 5) return false;
     if (s[2] != '-') return false;
@@ -94,6 +122,19 @@ static bool validateInput(const string &s) {
     return true;
 }
 
+/**
+ * Validate the move, convert it to the coordinates and process it.
+ *
+ * Return the appropriate int for the message.
+ *
+ * -5: invalid notation
+ * -4: the player does not have a piece on that square
+ * -3: the player is in check and the move does not lift it.
+ * -2: the move causes the player to be in check.
+ * -1: a valid piece was chosen but it cannot move to the square chosen.
+ *
+ * 0: a successful move
+ */
 int Board::processMove(const string &s, Color playerturn) {
     // invalid notation
     if (!validateInput(s)) return -5;
@@ -101,9 +142,9 @@ int Board::processMove(const string &s, Color playerturn) {
     char file2 = std::tolower(s[3]);
     char row1 = s[1];
     char row2 = s[4];
-    int y1 = 8 - (row1 - '0');
+    int y1 = DIMENSION - (row1 - '0');
     int x1 = file1 - 'a';
-    int y2 = 8 - (row2 - '0');
+    int y2 = DIMENSION - (row2 - '0');
     int x2 = file2 - 'a';
 
     // Check that this player has a piece on that square.
@@ -129,20 +170,21 @@ int Board::processMove(const string &s, Color playerturn) {
     // to that location
     if (!canMove) return -1;
 
-       // if this move causes the player to be under check it is invalid.
-    // reset the board
+    // if this move causes the player to be under check it is invalid.
+    // return a different message based off if the
     if (current->isUnderCheck(grid, opposition)) {
         return current->getUnderCheck() ? -3 : -2;
     }
-
+    // the move was valid, so the player cannot be under check
     current->setUnderCheck(false);
 
     if (lastMoved != nullptr) {
         lastMoved->setJustMoved(false);
     } else {
         // it's possible this is the first move, in which case this will do
-        // nothing. but if this was a castle, check the back row and remove the
-        // last moved flag from all the pieces there
+        // nothing. but if the last move was a castle, this will
+        // remove the last moved flag from all the pieces in the back row for
+        // both players
         for (int i = 0; i < DIMENSION; i++) {
             int r1 = convertCors(0, i);
             int r2 = convertCors(7, i);
@@ -154,21 +196,30 @@ int Board::processMove(const string &s, Color playerturn) {
             }
         }
     }
+    // set the last moved to the target square
     lastMoved = grid[convertCors(y2, x2)];
 
     // if it was a castle, the target square will be empty
+    // set the lastmoved flag elsewhere in that case
     if (lastMoved != nullptr) {
         lastMoved->setJustMoved(true);
     }
 
-    // check if it was a capture
+    // remove a piece if it was a capture
     opposition->removePiece(y2, x2);
+
     if (opposition->isUnderCheck(grid, current)) {
         opposition->setUnderCheck(true);
     }
     return 0;
 }
 
+/**
+ * Deep clone the board object.
+ * This is done so that a move can be made without being "binding".
+ * This way a move can be made, and it can be checked if it was invalid (due to
+ * causing or not removing checks)
+ */
 Board *Board::clone() {
     Board *newBoard = new Board();
 
@@ -178,7 +229,7 @@ Board *Board::clone() {
     Piece **whitePieces = newBoard->white->getPieces();
     Piece **blackPieces = newBoard->black->getPieces();
 
-    for (int i = 0; i < 16; i++) {
+    for (int i = 0; i < NUMPIECES; i++) {
         if (whitePieces[i] != nullptr) {
             int x = whitePieces[i]->getX();
             int y = whitePieces[i]->getY();

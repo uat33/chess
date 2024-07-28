@@ -1,5 +1,3 @@
-#include "../include/player.h"
-
 #include "player.h"
 
 Player::Player(Color c) {
@@ -71,7 +69,7 @@ static void pawnPromotionText() {
     std::cout << "N for Knight" << std::endl;
 }
 
-static char validatePromotion(const std::string &promotion) {
+static char validatePromotion(const string &promotion) {
     if (promotion.length() > 1) return '.';
     char piece = std::tolower(promotion[0]);
     if (piece != 'q' && piece != 'b' && piece != 'r' && piece != 'n') {
@@ -96,23 +94,29 @@ void Player::updatePiece(Piece *p, int y, int x) {
 void Player::promote(Piece **grid, int y, int x, char piece) {
     Piece *p;
     Color c = getColor();
+    int materialGain = 0;
     switch (piece) {
         case 'q':
             p = new Queen(y, x, c);
+            materialGain = 9;
             break;
         case 'r':
             p = new Rook(y, x, c);
+            materialGain = 5;
             break;
         case 'n':
             p = new Knight(y, x, c);
+            materialGain = 3;
             break;
         case 'b':
             p = new Bishop(y, x, c);
+            materialGain = 3;
             break;
         default:
             break;
     }
-
+    // - as this is how much material this player has lost
+    material -= materialGain;
     grid[convertCors(y, x)] = p;
     updatePiece(p, y, x);
 }
@@ -131,7 +135,7 @@ bool Player::makeMove(int y1, int x1, int y2, int x2, Piece **grid) {
             grid[targetIndex]->getType() == PieceType::PAWN &&
             (y2 == 0 || y2 == 7)) {
             pawnPromotionText();
-            std::string promotion;
+            string promotion;
             char piece = '.';
             while (piece == '.') {
                 std::getline(std::cin, promotion);
@@ -172,10 +176,31 @@ void Player::setMaterial(int x) {
     material = x;
 }
 
+static int getMaterialPiece(PieceType t) {
+    switch (t) {
+        case PieceType::PAWN:
+            return 1;
+        case PieceType::KNIGHT:
+            return 3;
+        case PieceType::BISHOP:
+            return 3;
+        case PieceType::ROOK:
+            return 5;
+        case PieceType::QUEEN:
+            return 9;
+        case PieceType::KING:
+            return 0;
+        default:
+            return 0;
+    }
+}
+
 void Player::removePiece(int y, int x) {
     for (int i = 0; i < NUMPIECES; i++) {
         if (pieces[i] != nullptr && pieces[i]->getY() == y &&
             pieces[i]->getX() == x) {
+            int materialChange = getMaterialPiece(pieces[i]->getType());
+            setMaterial(getMaterial() + materialChange);
             delete pieces[i];
             pieces[i] = nullptr;
         }

@@ -1,3 +1,8 @@
+// colors.h
+
+#ifndef COLORS_H
+#define COLORS_H
+
 #define RESET "\033[0m"
 #define RED "\033[31m"
 #define GREEN "\033[32m"
@@ -7,3 +12,5 @@
 #define CYAN "\033[36m"
 #define WHITE_TEXT "\033[37m"
 #define BLACK_TEXT "\033[30m"
+
+#endif

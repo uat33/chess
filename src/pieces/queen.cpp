@@ -1,4 +1,4 @@
-#include "../../include/piece.h"
+#include "piece.h"
 
 Queen::Queen(int y, int x, Color c) : Piece(y, x, c, PieceType::QUEEN) {}
 Piece* Queen::clone() const {

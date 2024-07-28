@@ -1,4 +1,4 @@
-#include "../../include/piece.h"
+#include "piece.h"
 
 Rook::Rook(int y, int x, Color c) : Piece(y, x, c, PieceType::ROOK) {}
 

@@ -17,18 +17,18 @@ class Piece {
           PieceType t = PieceType::PAWN);
 
     virtual ~Piece();
-    virtual Piece *clone() const = 0;
     int getX() const;
     int getY() const;
     void setX(int x);
     void setY(int y);
-    PieceType getType() const;
     Color getColor() const;
+    PieceType getType() const;
+    bool getJustMoved() const;
+    void setJustMoved(bool x);
+    virtual Piece *clone() const = 0;
     virtual void display(Color c) const;
     virtual void makeMove(int y2, int x2, Piece **grid);
     virtual bool isValidMove(int y, int x, Piece **grid) = 0;
-    bool getJustMoved() const;
-    void setJustMoved(bool x);
 
    protected:
     PieceType type;

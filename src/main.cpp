@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "../include/game.h"
+#include "game.h"
 int main(int argc, char const *argv[]) {
     Game *game = new Game();
     game->startGame();

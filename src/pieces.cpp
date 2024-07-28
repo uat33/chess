@@ -1,8 +1,7 @@
-#include "../include/piece.h"
 #include "piece.h"
 
 string pieceString(PieceType t, Color c) {
-    const std::string whitePieces[] = {
+    const string whitePieces[] = {
         "\u2659",  // PAWN
         "\u2656",  // ROOK
         "\u2658",  // KNIGHT
@@ -11,7 +10,7 @@ string pieceString(PieceType t, Color c) {
         "\u2654"   // KING
     };
 
-    const std::string blackPieces[] = {
+    const string blackPieces[] = {
         "\u265F",  // PAWN
         "\u265C",  // ROOK
         "\u265E",  // KNIGHT
@@ -21,7 +20,7 @@ string pieceString(PieceType t, Color c) {
     };
 
     // Determine which array of pieces to use based on color
-    const std::string *pieces = (c == Color::WHITE) ? whitePieces : blackPieces;
+    const string *pieces = (c == Color::WHITE) ? whitePieces : blackPieces;
 
     // Return the appropriate piece string based on PieceType
     switch (t) {

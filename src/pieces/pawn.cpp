@@ -1,4 +1,4 @@
-#include "../../include/piece.h"
+#include "piece.h"
 
 Pawn::Pawn(int y, int x, Color c) : Piece(y, x, c, PieceType::PAWN) {}
 
