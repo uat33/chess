@@ -6,11 +6,16 @@ Piece* Bishop::clone() const {
     return new Bishop(*this);
 }
 bool Bishop::isValidMove(int targetY, int targetX, Piece** grid) {
-    return validDiagonalMove(getY(), getX(), targetY, targetX, grid);
+    std::vector<std::vector<int>> validMoves = listValidMoves(grid);
+
+    for (const auto& cor : validMoves) {
+        if (cor[0] == targetY && cor[1] == targetX) {
+            return true;
+        }
+    }
+    return false;
 }
 
 std::vector<std::vector<int>> Bishop::listValidMoves(Piece** grid) const {
-    std::vector<std::vector<int>> validMoves;
-
-    return validMoves;
+    return getDiagonalMoves(getY(), getX(), grid);
 }

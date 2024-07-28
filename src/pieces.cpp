@@ -102,79 +102,49 @@ void Piece::makeMove(int y2, int x2, Piece **grid) {
     grid[target]->setY(y2);
 }
 
-bool validLateralMove(int currentY, int currentX, int targetY, int targetX,
-                      Piece **grid) {
-    // must be the same x or the same y but not both
-    if (!((currentY == targetY) ^ (currentX == targetX))) return false;
-    int start, end;
-    bool movingVertically;
-    if (currentY == targetY) {
-        start = currentX;
-        end = targetX;
-        movingVertically = false;
-    } else {
-        start = currentY;
-        end = targetY;
-        movingVertically = true;
-    }
+static std::vector<std::vector<int>> getMovesInDirection(int directions[4][2],
+                                                         Piece **grid,
+                                                         int currentY,
+                                                         int currentX) {
+    std::vector<std::vector<int>> validMoves;
+    Color c = grid[convertCors(currentY, currentX)]->getColor();
+    int startX;
+    int startY;
 
-    const int direction = end - start > 0 ? 1 : -1;
-    start += direction;
-    // all squares in between must be empty
-    while (start != end) {
-        int index;
-        if (movingVertically) {
-            index = convertCors(start, currentX);
-        } else {
-            index = convertCors(currentY, start);
+    for (int i = 0; i < 4; i++) {
+        int yChange = directions[i][0];
+        int xChange = directions[i][1];
+        startX = currentX + xChange;
+        startY = currentY + yChange;
+        while (startX < DIMENSION && startY < DIMENSION && startX >= 0 &&
+               startY >= 0) {
+            int index = convertCors(startY, startX);
+            if (grid[index] == nullptr) {
+                validMoves.push_back({startY, startX});
+            } else if (grid[index]->getColor() != c) {
+                validMoves.push_back({startY, startX});
+                break;
+            } else {
+                break;
+            }
+            startX += xChange;
+            startY += yChange;
         }
-        if (grid[index] != nullptr) return false;
-        start += direction;
     }
 
-    // make sure the target square doesn't have piece of the same color
-    int targetIndex = convertCors(targetY, targetX);
-    int currentIndex = convertCors(currentY, currentX);
-    Color pieceColor = grid[currentIndex]->getColor();
-
-    if (grid[targetIndex] != nullptr &&
-        grid[targetIndex]->getColor() == pieceColor) {
-        return false;
-    }
-
-    return true;
+    return validMoves;
 }
 
-bool validDiagonalMove(int currentY, int currentX, int targetY, int targetX,
-                       Piece **grid) {
-    int diffY = std::fabs(currentY - targetY);
-    int diffX = std::fabs(currentX - targetX);
+std::vector<std::vector<int>> getDiagonalMoves(int currentY, int currentX,
+                                               Piece **grid) {
+    int arr[4][2] = {{-1, 1}, {1, 1}, {1, -1}, {-1, -1}};
 
-    if (diffY != diffX || diffX == 0) return false;
+    return getMovesInDirection(arr, grid, currentY, currentX);
+}
 
-    int directionX = currentX > targetX ? -1 : 1;
-    int directionY = currentY > targetY ? -1 : 1;
-    int startX = currentX + directionX;
-    int startY = currentY + directionY;
+std::vector<std::vector<int>> getLateralMoves(int currentY, int currentX,
+                                              Piece **grid) {
+    int arr[4][2] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
 
-    // check that the path from current to target is clear
-    while (startY != targetY) {
-        int index = convertCors(startY, startX);
-
-        if (grid[index] != nullptr) return false;
-
-        startY += directionY;
-        startX += directionX;
-    }
-    // check that the targer does not have one of the player's pieces
-    int targetIndex = convertCors(targetY, targetX);
-    int currentIndex = convertCors(currentY, currentX);
-    Color pieceColor = grid[currentIndex]->getColor();
-
-    if (grid[targetIndex] != nullptr &&
-        grid[targetIndex]->getColor() == pieceColor) {
-        return false;
-    }
-
-    return true;
+    return getMovesInDirection(arr, grid, currentY, currentX);
 }

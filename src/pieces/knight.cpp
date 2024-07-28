@@ -6,26 +6,45 @@ Piece* Knight::clone() const {
 }
 
 bool Knight::isValidMove(int targetY, int targetX, Piece** grid) {
-    int currentX = getX();
-    int currentY = getY();
 
-    int index = convertCors(targetY, targetX);
-    if (grid[index] != nullptr && grid[index]->getColor() == getColor()) {
-        return false;
+    std::vector<std::vector<int>> valid = listValidMoves(grid);
+    for (const auto& inner_vec : valid) {
+        if (inner_vec[0] == targetY && inner_vec[1] == targetX) {
+            return true;
+        }
     }
-    if (std::fabs(targetX - currentX) == 2 &&
-        std::fabs(targetY - currentY) == 1)
-        return true;
-
-    if (std::fabs(targetY - currentY) == 2 &&
-        std::fabs(targetX - currentX) == 1)
-        return true;
-
     return false;
 }
 
 std::vector<std::vector<int>> Knight::listValidMoves(Piece** grid) const {
     std::vector<std::vector<int>> validMoves;
+
+    int currentX = getX();
+    int currentY = getY();
+
+    std::vector<std::vector<int>> all;
+
+    all.push_back({currentX + 2, currentY - 1});
+    all.push_back({currentX + 2, currentY + 1});
+    all.push_back({currentX - 2, currentY - 1});
+    all.push_back({currentX - 2, currentY + 1});
+
+    all.push_back({currentX - 1, currentY + 2});
+    all.push_back({currentX + 1, currentY + 2});
+    all.push_back({currentX - 1, currentY - 2});
+    all.push_back({currentX + 1, currentY - 2});
+
+    for (const auto& cor : all) {
+        if (cor[0] < 0 || cor[0] > DIMENSION - 1 || cor[1] < 0 ||
+            cor[0] > DIMENSION - 1) {
+            continue;
+        }
+        int square = convertCors(cor[0], cor[1]);
+        if (grid[square] != nullptr && grid[square]->getColor() == color) {
+            continue;
+        }
+        validMoves.push_back({cor[0], cor[1]});
+    }
 
     return validMoves;
 }

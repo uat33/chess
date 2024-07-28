@@ -7,11 +7,15 @@ Piece* Rook::clone() const {
 }
 
 bool Rook::isValidMove(int targetY, int targetX, Piece** grid) {
-    bool res = validLateralMove(getY(), getX(), targetY, targetX, grid);
-    if (res) {
-        setHasMoved(true);
+    std::vector<std::vector<int>> validMoves = listValidMoves(grid);
+
+    for (const auto& cor : validMoves) {
+        if (cor[0] == y && cor[1] == x) {
+            setHasMoved(true);
+            return true;
+        }
     }
-    return res;
+    return false;
 }
 
 void Rook::makeMove(int y2, int x2, Piece** grid) {
@@ -28,7 +32,5 @@ void Rook::setHasMoved(bool x) {
 }
 
 std::vector<std::vector<int>> Rook::listValidMoves(Piece** grid) const {
-    std::vector<std::vector<int>> validMoves;
-
-    return validMoves;
+    return getLateralMoves(getY(), getX(), grid);
 }

@@ -112,6 +112,8 @@ class King : public Piece {
 };
 
 string pieceString(PieceType t, Color c);
-bool validLateralMove(int y1, int x1, int y2, int x2, Piece **grid);
-bool validDiagonalMove(int y1, int x1, int y2, int x2, Piece **grid);
+std::vector<std::vector<int>> getDiagonalMoves(int currentY, int currentX,
+                                               Piece **grid);
+std::vector<std::vector<int>> getLateralMoves(int currentY, int currentX,
+                                              Piece **grid);
 #endif  // PIECE_H

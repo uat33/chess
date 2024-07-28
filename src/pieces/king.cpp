@@ -6,59 +6,14 @@ Piece* King::clone() const {
     return new King(*this);
 }
 bool King::isValidMove(int y, int x, Piece** grid) {
-    int currentX = getX();
-    int currentY = getY();
-    int index = convertCors(y, x);
+    std::vector<std::vector<int>> validMoves = listValidMoves(grid);
 
-    // check if this is a castle
-
-    if (grid[index] != nullptr && grid[index]->getColor() == getColor()) {
-        if (underCheck || hasMoved) return false;
-
-        if (grid[index]->getType() == PieceType::ROOK) {
-            Rook* rook = dynamic_cast<Rook*>(grid[index]);
-            if (rook->getHasMoved()) return false;
-        } else {
-            return false;
+    for (const auto& cor : validMoves) {
+        if (cor[0] == y && cor[1] == x) {
+            return true;
         }
-
-        int inBetweenSquares = std::fabs(currentX - x) - 1;
-        int inBetweenCors[inBetweenSquares][2];
-        int inBetweenCorsIndex = 0;
-        // check that there are no pieces in between
-        int direction = x < currentX ? -1 : 1;
-
-        for (int i = currentX + direction; i != x; i += direction) {
-            int square = convertCors(y, i);
-            inBetweenCors[inBetweenCorsIndex][0] = y;
-            inBetweenCors[inBetweenCorsIndex++][1] = i;
-            if (grid[square] != nullptr) return false;
-        }
-
-        // check that there wouldn't be a check to the in between squares
-        for (int i = 0; i < inBetweenSquares; i++) {
-            int inBetweenY = inBetweenCors[i][0];
-            int inBetweenX = inBetweenCors[i][1];
-            for (int j = 0; j < DIMENSION * DIMENSION; j++) {
-                if (grid[j] != nullptr && grid[j]->getColor() != getColor() &&
-                    grid[j]->getType() != getType() &&
-                    grid[j]->isValidMove(inBetweenY, inBetweenX, grid)) {
-                    return false;
-                }
-            }
-        }
-        return true;
     }
-
-    if (x == currentX && y == currentY) return false;
-
-    if (std::fabs(x - currentX) > 1) return false;
-    if (std::fabs(y - currentY) > 1) return false;
-    if (grid[index] != nullptr && grid[index]->getColor() == getColor()) {
-        return false;
-    }
-
-    return true;
+    return false;
 }
 
 void King::setCheck(bool check) {
@@ -109,8 +64,75 @@ void King::makeMove(int y2, int x2, Piece** grid) {
     hasMoved = true;
 }
 
+static void addCastles(int y, int x, Piece** grid, Color color,
+                       std::vector<std::vector<int>>& validMoves) {
+    int r1 = convertCors(y, 0);
+    int r2 = convertCors(y, DIMENSION - 1);
+
+    for (auto c : {r1, r2}) {
+        if (grid[c] != nullptr && grid[c]->getColor() == color &&
+            grid[c]->getType() == PieceType::ROOK) {
+            Rook* rook = dynamic_cast<Rook*>(grid[c]);
+            if (!rook->getHasMoved()) {
+                // check that there are no pieces in between
+                int inBetweenSquares = std::fabs(x - grid[c]->getX()) - 1;
+                int inBetweenCors[inBetweenSquares][2];
+                int inBetweenCorsIndex = 0;
+                int direction = x < grid[c]->getX() ? -1 : 1;
+                bool inBetween = false;
+                for (int i = x + direction; i != x; i += direction) {
+                    int square = convertCors(y, i);
+                    inBetweenCors[inBetweenCorsIndex][0] = y;
+                    inBetweenCors[inBetweenCorsIndex++][1] = i;
+                    if (grid[square] != nullptr) {
+                        inBetween = true;
+                        break;
+                    }
+                }
+                if (inBetween) continue;
+                bool inBetweenCheck = false;
+                for (int i = 0; i < inBetweenSquares; i++) {
+                    int inBetweenY = inBetweenCors[i][0];
+                    int inBetweenX = inBetweenCors[i][1];
+                    for (int j = 0; j < DIMENSION * DIMENSION; j++) {
+                        if (grid[j] != nullptr &&
+                            grid[j]->getColor() != color &&
+                            grid[j]->getType() != PieceType::KING &&
+                            grid[j]->isValidMove(inBetweenY, inBetweenX,
+                                                 grid)) {
+                            inBetweenCheck = true;
+                            break;
+                        }
+                    }
+                }
+                if (!inBetweenCheck) {
+                    validMoves.push_back({grid[c]->getY(), grid[c]->getX()});
+                }
+            }
+        }
+    }
+}
+
 std::vector<std::vector<int>> King::listValidMoves(Piece** grid) const {
     std::vector<std::vector<int>> validMoves;
+    int currentX = getX();
+    int currentY = getY();
+    int startY = currentY - 1;
+    int startX = currentX - 1;
+
+    for (int i = startY; i < startY + 3; i++) {
+        for (int j = startX; j < startX + 3; j++) {
+            if (i == currentY && j == currentX) continue;
+            if (i >= 0 && i < DIMENSION && j >= 0 && j < DIMENSION) {
+                validMoves.push_back({i, j});
+            }
+        }
+    }
+
+    // check if a castle is valid
+    if (!(underCheck || hasMoved)) {
+        addCastles(currentY, currentX, grid, getColor(), validMoves);
+    }
 
     return validMoves;
 }
