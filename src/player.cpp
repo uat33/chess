@@ -62,6 +62,61 @@ bool Player::isUnderCheck(Piece **grid, Player *opponent) const {
     return false;
 }
 
+static void pawnPromotionText() {
+    std::cout << "Pawn promoted." << std::endl;
+    std::cout << "Choose which piece to promote to." << std::endl;
+    std::cout << "Q for Queen" << std::endl;
+    std::cout << "R for Rook" << std::endl;
+    std::cout << "B for Bishop" << std::endl;
+    std::cout << "N for Knight" << std::endl;
+}
+
+static char validatePromotion(const std::string &promotion) {
+    if (promotion.length() > 1) return '.';
+    char piece = std::tolower(promotion[0]);
+    if (piece != 'q' && piece != 'b' && piece != 'r' && piece != 'n') {
+        return '.';
+    }
+
+    return piece;
+}
+
+void Player::updatePiece(Piece *p, int y, int x) {
+    Piece **pieces = getPieces();
+    for (int i = 0; i < 16; i++) {
+        if (pieces[i] != nullptr) {
+            if (pieces[i]->getX() == x && pieces[i]->getY() == y) {
+                delete pieces[i];
+                pieces[i] = p;
+            }
+        }
+    }
+}
+
+void Player::promote(Piece **grid, int y, int x, char piece) {
+    Piece *p;
+    Color c = getColor();
+    switch (piece) {
+        case 'q':
+            p = new Queen(y, x, c);
+            break;
+        case 'r':
+            p = new Rook(y, x, c);
+            break;
+        case 'n':
+            p = new Knight(y, x, c);
+            break;
+        case 'b':
+            p = new Bishop(y, x, c);
+            break;
+        default:
+            break;
+    }
+
+    grid[convertCors(y, x)] = p;
+    updatePiece(p, y, x);
+}
+
 bool Player::makeMove(int y1, int x1, int y2, int x2, Piece **grid) {
     int index = convertCors(y1, x1);
 
@@ -69,6 +124,21 @@ bool Player::makeMove(int y1, int x1, int y2, int x2, Piece **grid) {
 
     if (validMove) {
         grid[index]->makeMove(y2, x2, grid);
+
+        int targetIndex = convertCors(y2, x2);
+        // check if it is a pawn promotion
+        if (grid[targetIndex] != nullptr &&
+            grid[targetIndex]->getType() == PieceType::PAWN &&
+            (y2 == 0 || y2 == 7)) {
+            pawnPromotionText();
+            std::string promotion;
+            char piece = '.';
+            while (piece == '.') {
+                std::getline(std::cin, promotion);
+                piece = validatePromotion(promotion);
+            }
+            promote(grid, y2, x2, piece);
+        }
     }
     return validMove;
 }

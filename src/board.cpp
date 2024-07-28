@@ -126,10 +126,10 @@ int Board::processMove(const string &s, Color playerturn) {
 
     bool canMove = current->makeMove(y1, x1, y2, x2, grid);
     // if false, this was not valid move due to the piece not being able to move
-    // there
+    // to that location
     if (!canMove) return -1;
 
-    // if this move causes the player to be under check it is invalid.
+       // if this move causes the player to be under check it is invalid.
     // reset the board
     if (current->isUnderCheck(grid, opposition)) {
         return current->getUnderCheck() ? -3 : -2;

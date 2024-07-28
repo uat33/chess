@@ -26,6 +26,8 @@ class Player {
     Color pieceColor;
     int material = 0;
     bool underCheck = false;
+    void promote(Piece **grid, int y, int x, char piece);
+    void updatePiece(Piece *p, int y, int x);
 };
 
 #endif

@@ -14,10 +14,11 @@ static void displayClone(Board *b, Color c) {
 void Game::startGame() {
     std::string move;
 
-    std::vector<string> moves = {"e2-e4", "d7-d5", "e4-d5", "d8-d5", "a2-a3",
-                                 "d5-e4", "g1-f3", "e1-e2", "f1-e2", "a7-a6",
-                                 "g1-f3", "a6-a5", "e1-h1", "b8-c6", "f1-e1",
-                                 "c8-g4", "e2-b5", "e8-a8"};
+    std::vector<string> moves = {
+        "e2-e4", "d7-d5", "e4-d5", "d8-d5", "a2-a3", "d5-e4", "g1-f3", "e1-e2",
+        "f1-e2", "a7-a6", "g1-f3", "a6-a5", "e1-h1", "b8-c6", "f1-e1", "c8-g4",
+        "e2-b5", "e8-a8", "e1-e4", "g4-f3", "b2-b4", "g8-f6", "b4-a5", "h7-h6",
+        "a5-a6", "h6-h5", "a6-a7", "h5-h4", "a7-a8"};
     int index = 0;
     while (true) {
         displayBoard();

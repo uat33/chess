@@ -54,7 +54,6 @@ bool King::isValidMove(int y, int x, Piece** grid) {
 
     if (std::fabs(x - currentX) > 1) return false;
     if (std::fabs(y - currentY) > 1) return false;
-
     if (grid[index] != nullptr && grid[index]->getColor() == getColor()) {
         return false;
     }
