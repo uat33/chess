@@ -7,8 +7,8 @@ Piece* Knight::clone() const {
 
 bool Knight::isValidMove(int targetY, int targetX, Piece** grid) {
     std::vector<std::vector<int>> valid = listValidMoves(grid);
-    for (const auto& inner_vec : valid) {
-        if (inner_vec[0] == targetY && inner_vec[1] == targetX) {
+    for (const auto& cor : valid) {
+        if (cor[0] == targetY && cor[1] == targetX) {
             return true;
         }
     }

@@ -110,7 +110,6 @@ static std::vector<std::vector<int>> getMovesInDirection(int directions[4][2],
     Color c = grid[convertCors(currentY, currentX)]->getColor();
     int startX;
     int startY;
-
     for (int i = 0; i < 4; i++) {
         int yChange = directions[i][0];
         int xChange = directions[i][1];

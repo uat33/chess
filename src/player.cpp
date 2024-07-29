@@ -49,7 +49,6 @@ bool Player::isUnderCheck(Piece **grid, Player *opponent) const {
     Piece **opponentPieces = opponent->getPieces();
     int kingY = pieces[4]->getY();
     int kingX = pieces[4]->getX();
-
     for (int i = 0; i < 16; i++) {
         if (opponentPieces[i] != nullptr &&
             opponentPieces[i]->isValidMove(kingY, kingX, grid)) {

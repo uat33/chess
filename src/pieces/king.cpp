@@ -5,11 +5,11 @@ King::King(int y, int x, Color c) : Piece(y, x, c, PieceType::KING) {}
 Piece* King::clone() const {
     return new King(*this);
 }
-bool King::isValidMove(int y, int x, Piece** grid) {
+bool King::isValidMove(int targetY, int targetX, Piece** grid) {
     std::vector<std::vector<int>> validMoves = listValidMoves(grid);
 
     for (const auto& cor : validMoves) {
-        if (cor[0] == y && cor[1] == x) {
+        if (cor[0] == targetY && cor[1] == targetX) {
             return true;
         }
     }
@@ -78,9 +78,10 @@ static void addCastles(int y, int x, Piece** grid, Color color,
                 int inBetweenSquares = std::fabs(x - grid[c]->getX()) - 1;
                 int inBetweenCors[inBetweenSquares][2];
                 int inBetweenCorsIndex = 0;
-                int direction = x < grid[c]->getX() ? -1 : 1;
+                int direction = x < grid[c]->getX() ? 1 : -1;
                 bool inBetween = false;
-                for (int i = x + direction; i != x; i += direction) {
+                for (int i = x + direction; i != grid[c]->getX();
+                     i += direction) {
                     int square = convertCors(y, i);
                     inBetweenCors[inBetweenCorsIndex][0] = y;
                     inBetweenCors[inBetweenCorsIndex++][1] = i;
@@ -97,7 +98,6 @@ static void addCastles(int y, int x, Piece** grid, Color color,
                     for (int j = 0; j < DIMENSION * DIMENSION; j++) {
                         if (grid[j] != nullptr &&
                             grid[j]->getColor() != color &&
-                            grid[j]->getType() != PieceType::KING &&
                             grid[j]->isValidMove(inBetweenY, inBetweenX,
                                                  grid)) {
                             inBetweenCheck = true;
@@ -124,7 +124,9 @@ std::vector<std::vector<int>> King::listValidMoves(Piece** grid) const {
         for (int j = startX; j < startX + 3; j++) {
             if (i == currentY && j == currentX) continue;
             if (i >= 0 && i < DIMENSION && j >= 0 && j < DIMENSION) {
-                validMoves.push_back({i, j});
+                if (grid[convertCors(i, j)] == nullptr ||
+                    grid[convertCors(i, j)]->getColor() != getColor())
+                    validMoves.push_back({i, j});
             }
         }
     }

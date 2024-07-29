@@ -7,8 +7,8 @@ Piece *Pawn::clone() const {
 }
 bool Pawn::isValidMove(int targetY, int targetX, Piece **grid) {
     std::vector<std::vector<int>> moves = listValidMoves(grid);
-    for (const auto &inner_vec : moves) {
-        if (inner_vec[0] == targetY && inner_vec[1] == targetX) {
+    for (const auto &cor : moves) {
+        if (cor[0] == targetY && cor[1] == targetX) {
             return true;
         }
     }

@@ -4,11 +4,11 @@ Queen::Queen(int y, int x, Color c) : Piece(y, x, c, PieceType::QUEEN) {}
 Piece* Queen::clone() const {
     return new Queen(*this);
 }
-bool Queen::isValidMove(int y, int x, Piece** grid) {
+bool Queen::isValidMove(int targetY, int targetX, Piece** grid) {
     std::vector<std::vector<int>> validMoves = listValidMoves(grid);
 
     for (const auto& cor : validMoves) {
-        if (cor[0] == y && cor[1] == x) {
+        if (cor[0] == targetY && cor[1] == targetX) {
             return true;
         }
     }
