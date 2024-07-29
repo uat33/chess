@@ -65,8 +65,8 @@ void Game::startGame() {
         displayBoard();
         std::cout << "Enter a move (enter 'resign' to resign): " << std::endl;
         std::cout << "Format `{tile 1}-{tile 2}` (e.g e2-e4)" << std::endl;
-        std::cout << "To castle, move your king onto the rook with which you "
-                     "want to castle."
+        std::cout << "To castle, move your king onto the rook you want to "
+                     "castle it with."
                   << std::endl;
         std::getline(std::cin, move);
         if (move == "resign") {
