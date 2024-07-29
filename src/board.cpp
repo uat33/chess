@@ -143,7 +143,7 @@ int Board::makeMove(int y1, int x1, int y2, int x2, Color turn) {
     // to that location
     if (!canMove) return -1;
     // remove a piece if it was a capture
-    bool removed = opposition->removePiece(y2, x2, grid);
+    opposition->removePiece(y2, x2, grid);
     // if this move causes the player to be under check it is invalid.
     // return a different message based off if the
     if (current->isUnderCheck(grid, opposition)) {

@@ -53,6 +53,12 @@ static bool checkmate(Board *b, Color turn) {
     return true;
 }
 
+static void endGameText(const string &wayGameLost, Color turn) {
+    std::cout << wayGameLost << std::endl;
+    std::cout << (turn == Color::BLACK ? "Black " : "White ") << "wins."
+              << std::endl;
+}
+
 void Game::startGame() {
     string move;
     while (true) {
@@ -62,9 +68,10 @@ void Game::startGame() {
 
         std::getline(std::cin, move);
         if (move == "resign") {
-            std::cout << "Resignation." << std::endl;
-            std::cout << (playerturn == Color::BLACK ? "White " : "Black ")
-                      << "wins." << std::endl;
+            endGameText("Resignation.", playerturn == Color::BLACK
+                                            ? Color::WHITE
+                                            : Color::BLACK);
+            displayBoard();
             break;
         }
         // clone the board so it can be reverted
@@ -82,14 +89,12 @@ void Game::startGame() {
         delete boardCopy;
 
         // check if game over
-        // clone again to get the new move
+        // clone again to get the new move into the copy
         boardCopy = board->clone();
         bool over = checkmate(boardCopy, playerturn);
         if (over) {
+            endGameText("Checkmate.", playerturn);
             displayBoard();
-            std::cout << "Checkmate." << std::endl;
-            std::cout << (playerturn == Color::BLACK ? "Black " : "White ")
-                      << "wins." << std::endl;
             delete boardCopy;
             break;
         }

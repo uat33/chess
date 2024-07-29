@@ -5,7 +5,6 @@
 
 #include <cmath>
 #include <iostream>
-#include <memory>
 
 #include "colors.h"
 #include "definitions.h"
