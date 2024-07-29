@@ -211,7 +211,7 @@ static int getMaterialPiece(PieceType t) {
     }
 }
 
-void Player::removePiece(int y, int x) {
+bool Player::removePiece(int y, int x, Piece **grid) {
     for (int i = 0; i < NUMPIECES; i++) {
         if (pieces[i] != nullptr && pieces[i]->getY() == y &&
             pieces[i]->getX() == x) {
@@ -219,6 +219,8 @@ void Player::removePiece(int y, int x) {
             setMaterial(getMaterial() + materialChange);
             delete pieces[i];
             pieces[i] = nullptr;
+            return true;
         }
     }
+    return false;
 }

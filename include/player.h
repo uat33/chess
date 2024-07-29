@@ -17,7 +17,7 @@ class Player {
     void setMaterial(int x);
     bool getUnderCheck() const;
     void setUnderCheck(bool x);
-    void removePiece(int y, int x);
+    bool removePiece(int y, int x, Piece **grid);
     bool isUnderCheck(Piece **grid, Player *opponent) const;
     bool makeMove(int y1, int x1, int y2, int x2, Piece **grid);
 

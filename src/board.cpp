@@ -13,7 +13,6 @@ Board::Board() : black(nullptr), white(nullptr), lastMoved(nullptr) {
 Board::Board(bool init) {
     white = new Player(Color::WHITE, true);
     black = new Player(Color::BLACK, true);
-
     Piece **whitePieces = white->getPieces();
     Piece **blackPieces = black->getPieces();
 
@@ -122,6 +121,71 @@ static bool validateInput(const string &s) {
     return true;
 }
 
+int Board::makeMove(int y1, int x1, int y2, int x2, Color turn) {
+    if (grid[convertCors(y1, x1)] == nullptr ||
+        grid[convertCors(y1, x1)]->getColor() != turn) {
+        return -4;
+    }
+
+    // make the move
+    Player *current;
+    Player *opposition;
+    if (turn == Color::WHITE) {
+        current = white;
+        opposition = black;
+
+    } else {
+        current = black;
+        opposition = white;
+    }
+
+    bool canMove = current->makeMove(y1, x1, y2, x2, grid);
+    // if false, this was not valid move due to the piece not being able to move
+    // to that location
+    if (!canMove) return -1;
+    // remove a piece if it was a capture
+    bool removed = opposition->removePiece(y2, x2, grid);
+    // if this move causes the player to be under check it is invalid.
+    // return a different message based off if the
+    if (current->isUnderCheck(grid, opposition)) {
+        return current->getUnderCheck() ? -3 : -2;
+    }
+    // the move was valid, so the player cannot be under check
+    current->setUnderCheck(false);
+
+    if (lastMoved != nullptr && !removed) {
+        lastMoved->setJustMoved(false);
+    } else {
+        // it's possible this is the first move, in which case this will do
+        // nothing. but if the last move was a castle, this will
+        // remove the last moved flag from all the pieces in the back row for
+        // both players
+        for (int i = 0; i < DIMENSION; i++) {
+            int r1 = convertCors(0, i);
+            int r2 = convertCors(7, i);
+            if (grid[r1] != nullptr) {
+                grid[r1]->setJustMoved(false);
+            }
+            if (grid[r2] != nullptr) {
+                grid[r2]->setJustMoved(false);
+            }
+        }
+    }
+
+    // set the last moved to the target square
+    lastMoved = grid[convertCors(y2, x2)];
+
+    // if it was a castle, the target square will be empty
+    if (lastMoved != nullptr) {
+        lastMoved->setJustMoved(true);
+    }
+
+    if (opposition->isUnderCheck(grid, current)) {
+        opposition->setUnderCheck(true);
+    }
+    return 0;
+}
+
 /**
  * Validate the move, convert it to the coordinates and process it.
  *
@@ -147,71 +211,7 @@ int Board::processMove(const string &s, Color playerturn) {
     int y2 = DIMENSION - (row2 - '0');
     int x2 = file2 - 'a';
 
-    // Check that this player has a piece on that square.
-    if (grid[convertCors(y1, x1)] == nullptr ||
-        grid[convertCors(y1, x1)]->getColor() != playerturn) {
-        return -4;
-    }
-
-    // make the move
-    Player *current;
-    Player *opposition;
-    if (playerturn == Color::WHITE) {
-        current = white;
-        opposition = black;
-
-    } else {
-        current = black;
-        opposition = white;
-    }
-
-    bool canMove = current->makeMove(y1, x1, y2, x2, grid);
-    // if false, this was not valid move due to the piece not being able to move
-    // to that location
-    if (!canMove) return -1;
-
-    // if this move causes the player to be under check it is invalid.
-    // return a different message based off if the
-    if (current->isUnderCheck(grid, opposition)) {
-        return current->getUnderCheck() ? -3 : -2;
-    }
-    // the move was valid, so the player cannot be under check
-    current->setUnderCheck(false);
-
-    if (lastMoved != nullptr) {
-        lastMoved->setJustMoved(false);
-    } else {
-        // it's possible this is the first move, in which case this will do
-        // nothing. but if the last move was a castle, this will
-        // remove the last moved flag from all the pieces in the back row for
-        // both players
-        for (int i = 0; i < DIMENSION; i++) {
-            int r1 = convertCors(0, i);
-            int r2 = convertCors(7, i);
-            if (grid[r1] != nullptr) {
-                grid[r1]->setJustMoved(false);
-            }
-            if (grid[r2] != nullptr) {
-                grid[r2]->setJustMoved(false);
-            }
-        }
-    }
-    // set the last moved to the target square
-    lastMoved = grid[convertCors(y2, x2)];
-
-    // if it was a castle, the target square will be empty
-    // set the lastmoved flag elsewhere in that case
-    if (lastMoved != nullptr) {
-        lastMoved->setJustMoved(true);
-    }
-
-    // remove a piece if it was a capture
-    opposition->removePiece(y2, x2);
-
-    if (opposition->isUnderCheck(grid, current)) {
-        opposition->setUnderCheck(true);
-    }
-    return 0;
+    return makeMove(y1, x1, y2, x2, playerturn);
 }
 
 /**

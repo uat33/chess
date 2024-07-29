@@ -50,18 +50,11 @@ void King::makeMove(int y2, int x2, Piece** grid) {
         newKingSquare = x2 + 2;
         newRookSquare = x2 + 3;
     }
-    grid[kingSquare]->setX(newKingSquare);
-    grid[target]->setX(newRookSquare);
-    Rook* rook = dynamic_cast<Rook*>(grid[target]);
-    rook->setHasMoved(true);
-    grid[convertCors(y2, newKingSquare)] = grid[kingSquare];
-    grid[convertCors(y2, newRookSquare)] = grid[target];
-    grid[convertCors(y2, newKingSquare)]->setJustMoved(true);
-    grid[convertCors(y2, newRookSquare)]->setJustMoved(true);
 
-    grid[target] = nullptr;
-    grid[kingSquare] = nullptr;
-    hasMoved = true;
+    grid[kingSquare]->setJustMoved(true);
+    grid[target]->setJustMoved(true);
+    grid[kingSquare]->makeMove(getY(), newKingSquare, grid);
+    grid[target]->makeMove(getY(), newRookSquare, grid);
 }
 
 static void addCastles(int y, int x, Piece** grid, Color color,
@@ -73,6 +66,7 @@ static void addCastles(int y, int x, Piece** grid, Color color,
         if (grid[c] != nullptr && grid[c]->getColor() == color &&
             grid[c]->getType() == PieceType::ROOK) {
             Rook* rook = dynamic_cast<Rook*>(grid[c]);
+            // if rook has moved you can't castle
             if (!rook->getHasMoved()) {
                 // check that there are no pieces in between
                 int inBetweenSquares = std::fabs(x - grid[c]->getX()) - 1;
@@ -92,6 +86,8 @@ static void addCastles(int y, int x, Piece** grid, Color color,
                 }
                 if (inBetween) continue;
                 bool inBetweenCheck = false;
+                // check that none of the opposing pieces can move to those in
+                // between squares
                 for (int i = 0; i < inBetweenSquares; i++) {
                     int inBetweenY = inBetweenCors[i][0];
                     int inBetweenX = inBetweenCors[i][1];
@@ -113,6 +109,15 @@ static void addCastles(int y, int x, Piece** grid, Color color,
     }
 }
 
+/**
+ * Find all the valid moves for a king.
+ * Create 3x3 grid surrounding the king
+ * Omit the square the king is on, but if all the other squares do not have one
+ * of this player's pieces, add that move
+ *
+ * If the king hasn't moved and is not under check if a castle if valid.
+ *
+ */
 std::vector<std::vector<int>> King::listValidMoves(Piece** grid) const {
     std::vector<std::vector<int>> validMoves;
     int currentX = getX();

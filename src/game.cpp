@@ -8,48 +8,42 @@ Game::~Game() {
     delete board;
 }
 
-bool checkmate(Board *b, Color turn) {
-    Player *current;
+static bool checkmate(Board *b, Color turn) {
+    Color oppositeColor;
     Player *opposition;
     if (turn == Color::BLACK) {
-        current = b->getBlackPlayer();
         opposition = b->getWhitePlayer();
+        oppositeColor = Color::WHITE;
     } else {
         opposition = b->getBlackPlayer();
-        current = b->getWhitePlayer();
+        oppositeColor = Color::BLACK;
     }
-
+    // cannot be checkmated if you are not under check
     if (!opposition->getUnderCheck()) return false;
-    // check that opposition has a move that lifts check
 
+    // check that opposition has a move that lifts check
     Piece **pieces = opposition->getPieces();
-    for (int i = 0; i < 16; i++) {
+    for (int i = 0; i < NUMPIECES; i++) {
         if (pieces[i] == nullptr) continue;
-        std::vector<std::vector<int>> p1 =
+        std::vector<std::vector<int>> validMoves =
             pieces[i]->listValidMoves(b->getGrid());
 
-        for (int j = 0; j < p1.size(); j++) {
+        for (const auto &validMove : validMoves) {
             Board *boardCopy = b->clone();
 
-            Player *currentCopy;
             Player *oppCopy;
             if (turn == Color::BLACK) {
-                currentCopy = boardCopy->getBlackPlayer();
                 oppCopy = boardCopy->getWhitePlayer();
             } else {
                 oppCopy = boardCopy->getBlackPlayer();
-                currentCopy = boardCopy->getWhitePlayer();
             }
 
             Piece *p = oppCopy->getPieces()[i];
-            Piece **grid = boardCopy->getGrid();
-            int y = p1[j][0];
-            int x = p1[j][1];
-
-            p->makeMove(y, x, grid);
-            if (!oppCopy->isUnderCheck(boardCopy->getGrid(), currentCopy)) {
-                boardCopy->display(turn);
-                // delete b;
+            int y = validMove[0];
+            int x = validMove[1];
+            boardCopy->makeMove(p->getY(), p->getX(), y, x, oppositeColor);
+            if (!oppCopy->getUnderCheck()) {
+                delete boardCopy;
                 return false;
             }
             delete boardCopy;
@@ -61,21 +55,15 @@ bool checkmate(Board *b, Color turn) {
 
 void Game::startGame() {
     string move;
-    std::vector<std::string> moves = {
-        "e2-e4", "d7-d5", "g1-f3", "d8-d6", "f1-b5", "c7-c6",
-        "e1-h1", "g8-f6", "c2-c4", "g7-g5", "c4-c5", "f8-h6",
-        "c5-d6", "h8-g8", "b1-c3", "g8-h8", "a2-a3", "e8-h8"};
+
     int index = 0;
     while (true) {
         displayBoard();
         std::cout << "Enter a move (enter 'resign' to resign): " << std::endl;
         std::cout << "Format `{tile 1}-{tile 2}` (e.g e2-e4)" << std::endl;
 
-        if (index < moves.size()) {
-            move = moves[index++];
-        } else {
-            std::getline(std::cin, move);
-        }
+        std::getline(std::cin, move);
+
         if (move == "resign") {
             break;
         }
@@ -111,6 +99,7 @@ void Game::startGame() {
         // have been made
         if (res != 0) continue;
 
+        // valid move so switch whose turn it is
         if (playerturn == Color::WHITE) {
             playerturn = Color::BLACK;
         } else {
