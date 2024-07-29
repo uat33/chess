@@ -50,7 +50,6 @@ void King::makeMove(int y2, int x2, Piece** grid) {
         newKingSquare = x2 + 2;
         newRookSquare = x2 + 3;
     }
-
     grid[kingSquare]->setJustMoved(true);
     grid[target]->setJustMoved(true);
     grid[kingSquare]->makeMove(getY(), newKingSquare, grid);
@@ -93,11 +92,22 @@ static void addCastles(int y, int x, Piece** grid, Color color,
                     int inBetweenX = inBetweenCors[i][1];
                     for (int j = 0; j < DIMENSION * DIMENSION; j++) {
                         if (grid[j] != nullptr &&
-                            grid[j]->getColor() != color &&
-                            grid[j]->isValidMove(inBetweenY, inBetweenX,
-                                                 grid)) {
-                            inBetweenCheck = true;
-                            break;
+                            grid[j]->getColor() != color) {
+                            if (grid[j]->getType() != PieceType::KING &&
+                                grid[j]->isValidMove(inBetweenY, inBetweenX,
+                                                     grid)) {
+                                inBetweenCheck = true;
+                                break;
+                            } else {
+                                int kingY = grid[j]->getY();
+                                int kingX = grid[j]->getX();
+
+                                if (std::fabs(inBetweenY - kingY) <= 1 &&
+                                    std::fabs(inBetweenX - kingX) <= 1) {
+                                    inBetweenCheck = true;
+                                    break;
+                                }
+                            }
                         }
                     }
                 }

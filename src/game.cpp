@@ -55,22 +55,22 @@ static bool checkmate(Board *b, Color turn) {
 
 void Game::startGame() {
     string move;
-
-    int index = 0;
     while (true) {
         displayBoard();
         std::cout << "Enter a move (enter 'resign' to resign): " << std::endl;
         std::cout << "Format `{tile 1}-{tile 2}` (e.g e2-e4)" << std::endl;
 
         std::getline(std::cin, move);
-
         if (move == "resign") {
+            std::cout << "Resignation." << std::endl;
+            std::cout << (playerturn == Color::BLACK ? "White " : "Black ")
+                      << "wins." << std::endl;
             break;
         }
         // clone the board so it can be reverted
         boardCopy = board->clone();
-
         int res = processMove(move);
+
         if (res == -2 || res == -3) {
             // delete the board with the move (which is invalid)
             delete board;
@@ -113,8 +113,8 @@ void Game::displayBoard() const {
 }
 
 int Game::processMove(const string &move) {
+    std::cout << move << std::endl;
     int result = board->processMove(move, playerturn);
-
     if (result == -5) {
         std::cout << "Invalid notation." << std::endl;
     } else if (result == -4) {

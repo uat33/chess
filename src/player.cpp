@@ -50,8 +50,15 @@ bool Player::isUnderCheck(Piece **grid, Player *opponent) const {
     int kingY = pieces[4]->getY();
     int kingX = pieces[4]->getX();
     for (int i = 0; i < 16; i++) {
-        if (opponentPieces[i] != nullptr &&
-            opponentPieces[i]->isValidMove(kingY, kingX, grid)) {
+        if (i == 4) {
+            int oppKingX = opponentPieces[i]->getX();
+            int oppKingY = opponentPieces[i]->getY();
+            if (std::fabs(kingY - oppKingY) <= 1 &&
+                std::fabs(kingX - oppKingX) <= 1) {
+                return true;
+            }
+        } else if (opponentPieces[i] != nullptr &&
+                   opponentPieces[i]->isValidMove(kingY, kingX, grid)) {
             return true;
         }
     }

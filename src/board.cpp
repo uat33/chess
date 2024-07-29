@@ -126,7 +126,6 @@ int Board::makeMove(int y1, int x1, int y2, int x2, Color turn) {
         grid[convertCors(y1, x1)]->getColor() != turn) {
         return -4;
     }
-
     // make the move
     Player *current;
     Player *opposition;
@@ -153,21 +152,17 @@ int Board::makeMove(int y1, int x1, int y2, int x2, Color turn) {
     // the move was valid, so the player cannot be under check
     current->setUnderCheck(false);
 
-    if (lastMoved != nullptr && !removed) {
+    if (lastMoved != nullptr) {
         lastMoved->setJustMoved(false);
     } else {
         // it's possible this is the first move, in which case this will do
         // nothing. but if the last move was a castle, this will
-        // remove the last moved flag from all the pieces in the back row for
-        // both players
+        // remove the last moved flag from all the pieces in the back row
+        int row = turn == Color::WHITE ? 0 : 7;
         for (int i = 0; i < DIMENSION; i++) {
-            int r1 = convertCors(0, i);
-            int r2 = convertCors(7, i);
+            int r1 = convertCors(row, i);
             if (grid[r1] != nullptr) {
                 grid[r1]->setJustMoved(false);
-            }
-            if (grid[r2] != nullptr) {
-                grid[r2]->setJustMoved(false);
             }
         }
     }
